@@ -1,0 +1,385 @@
+###############################################################################
+# Licensed Materials - Property of IBM.
+# Copyright IBM Corporation 2020. All Rights Reserved.
+# U.S. Government Users Restricted Rights - Use, duplication or disclosure
+# restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+# Contributors:
+# IBM Corporation - initial API and implementation
+###############################################################################
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: ibmcfmrprods.cfmr.ibm.com
+  labels:
+    release: cfmr-operator
+    app.kubernetes.io/name: cfmr-operator
+    app.kubernetes.io/instance: cfmr-instance
+    app.kubernetes.io/managed-by: helm
+spec:
+  group: cfmr.ibm.com
+  names:
+    kind: IbmCfmrProd
+    listKind: IbmCfmrProdList
+    plural: ibmcfmrprods
+    shortNames:
+    - cfmr
+    singular: ibmcfmrprod
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      type: object
+      description: CFMR is the Schema for the CFMR installer job
+      properties:
+        spec:
+          type: object
+          properties:
+            global:
+              properties:
+                image:
+                  properties:
+                    repository:
+                      description: "docker repository where the chart images are located"
+                      type: string
+                    pullSecret:
+                      description: "image pullsecret to be used with service account"
+                      type: string
+                  type: object
+                podAnnotations:
+                  properties:
+                    productName:
+                      description: "Name of Product"
+                      type: string
+                    productID:
+                      description: "ID of Product"
+                      type: string
+                    productVersion:
+                      description: "Version of Product"
+                      type: string
+                    productMetric:
+                      description: "The license metric of the product"
+                      type: string
+                    productChargedContainers:
+                      description: "The containers charged as part of the license"
+                      type: string
+                  type: object
+              type: object
+            license:
+              properties:
+                accept:
+                  description: "Change value to true to indicate you have read and agree to license agreements : http://ibm.biz/cfmr-license"
+                  type: boolean
+              required:
+              - accept
+              type: object
+            action:
+              description: "Action to perform by installer. Available actions are `install`, `check`, `verify`, `upgrade`."
+              type: string
+            features:
+              properties:
+                cfoVersion:
+                  description: "CF-Operator version"
+                  type: string
+                cfmrVersion:
+                  description: "Cloud Foundry Migration Runtime version"
+                  type: string
+                stratosVersion:
+                  description: "Stratos UI version."
+                  type: string
+                storageClass:
+                  description: "Specified name of storage class. If empty, default storage class is used."
+                  type: string
+                enableCertManager:
+                  description: "Enable certificate manager for secure connections to UI/cf api."
+                  type: boolean
+                enableHighAvailability:
+                  description: "Enable highly available installation of cfmr."
+                  type: boolean
+                ldap:
+                  properties:
+                    enableIntegration:
+                      description: "Enable LDAP integration with cfmr. LDAP must already be configured before integration."
+                      type: boolean
+                    bindDN:
+                      description: "LDAP bind DN - Leave blank if search can be performed without a bind_dn."
+                      type: string
+                    bindPassword:
+                      description: "LDAP bind password - Leave blank if search can be performed without a bind_dn - Cannot be null if bind_dn is provided."
+                      type: string
+                    attributes:
+                      properties:
+                        id:
+                          description: "Base attribute to map - Example: dn."
+                          type: string
+                        name:
+                          description: "Name attribute to map - Example: cn."
+                          type: string
+                        preferredUsername:
+                          description: "Preferred user name to map - Example: uid."
+                          type: string
+                      type: object
+                    ipAddress:
+                      description: "The IP address of the LDAP server."
+                      type: string
+                    port:
+                      description: "The port of the LDAP server."
+                      type: string
+                    filterParams:
+                      description: "LDAP filter parameters for OpenShift to search for users - Example: ou=users,dc=..,dc=..?uid."
+                      type: string
+                    userDN:
+                      description: "Entire LDAP admin CN information here - Example: cn=LDAPadmin,dc=..,dc=.."
+                      type: string
+                    userPassword:
+                      description: "LDAP User Password"
+                      type: string
+                    searchBase:
+                      description: "Main base DN information"
+                      type: string
+                    searchFilter:
+                      description: "LDAP search filter for UAA to search user information - Example: uid{0}."
+                      type: string
+                    groups:
+                      properties:
+                        groupSearchFilter:
+                          description: "The LDAP group search filter for UAA to search for member users in a group - Example: memberUid{0}."
+                          type: string
+                        maxSearchDepth:
+                          description: "Maximum group search depth - Example: 15"
+                          type: string
+                        searchBase:
+                          description: "LDAP group search base - the base DN to start the group search."
+                          type: string
+                      type: object
+                    ccAdminFilter:
+                      description: "CN for cloudcontroller.admin group - This is for UAA to add this as a group for external users."
+                      type: string
+                  type: object
+                multiEnvironments:
+                  description: "Enabled multiple environments to be setup. For example, `dev test` will create two environments `dev-cfmr` and `test-cfmr`"
+                  type: string
+                stack:
+                  description: "Stack definition deployed is either `cflinuxfs3` or `ubi`. Defaults to `cflinuxfs3`."
+                  type: string
+                embeddedDatabase:
+                  properties:
+                    enabled:
+                      description: "Enable the embedded database. If this is disabled, then features.externalDatabase should be configured to use an external database."
+                      type: boolean
+                  type: object
+                externalDatabase:
+                  properties:
+                    enabled:
+                      description: "Enable the external database. If this is enabled, then features.embeddedDatabase must be disabled"
+                      type: boolean
+                    requireSSL:
+                      description: "Require secure SSL connection to external database"
+                      type: boolean
+                    caCert:
+                      description: "External database CA certificate"
+                      type: string
+                    type:
+                      description: "External database type; it can be either 'mysql' or 'postgres'"
+                      type: string
+                    host:
+                      description: "External database host name"
+                      type: string
+                    port:
+                      description: "External database port number"
+                      type: string
+                    databases:
+                      properties:
+                        uaa:
+                          properties:
+                            name:
+                              description: "UAA Database Name"
+                              type: string
+                            password:
+                              description: "UAA Database Password"
+                              type: string
+                            username:
+                              description: "UAA Database Username"
+                              type: string
+                          type: object
+                        cc:
+                          properties:
+                            name:
+                              description: "CC Database Name"
+                              type: string
+                            password:
+                              description: "CC Database Password"
+                              type: string
+                            username:
+                              description: "CC Database Username"
+                              type: string
+                          type: object
+                        bbs:
+                          properties:
+                            name:
+                              description: "BBS Database Name"
+                              type: string
+                            password:
+                              description: "BBS Database Password"
+                              type: string
+                            username:
+                              description: "BBS Database Username"
+                              type: string
+                          type: object
+                        routingApi:
+                          properties:
+                            name:
+                              description: "Routing API Database Name"
+                              type: string
+                            password:
+                              description: "Routing API Database Password"
+                              type: string
+                            username:
+                              description: "Routing API Database Username"
+                              type: string
+                          type: object
+                        policyServer:
+                          properties:
+                            name:
+                              description: "Policy Server Database Name"
+                              type: string
+                            password:
+                              description: "Policy Server Database Password"
+                              type: string
+                            username:
+                              description: "Policy Server Database Username"
+                              type: string
+                          type: object
+                        silkController:
+                          properties:
+                            name:
+                              description: "Silk Controller Database Name"
+                              type: string
+                            password:
+                              description: "Silk Controller Database Password"
+                              type: string
+                            username:
+                              description: "Silk Controller Database Username"
+                              type: string
+                          type: object
+                        locket:
+                          properties:
+                            name:
+                              description: "Locket Database Name"
+                              type: string
+                            password:
+                              description: "Locket Database Password"
+                              type: string
+                            username:
+                              description: "Locket Database Username"
+                              type: string
+                          type: object
+                        credhub:
+                          properties:
+                            name:
+                                description: "Credhub Database Name"
+                                type: string
+                            password:
+                                description: "Credhub Database Password"
+                                type: string
+                            username:
+                                description: "Credhub Database Username"
+                                type: string
+                          type: object
+                      type: object
+                  type: object
+                customDomain:
+                  description: "Custom Domain to set for CFMR"
+                  type: string
+                customCertNamespace:
+                  description: "Namespace where the custom certificate user for routes is placed"
+                  type: string
+                customCertSecret:
+                  description: "Secret name which contains the custom certificate used for routes"
+                  type: string
+                chartRepository:
+                  description: "Helm Chart Repository used for air-gapping capability"
+                  type: string
+                chartRepositoryName:
+                  description: "Helm Chart Repository Name used for air-gapping capability"
+                  type: string
+                persiBrokerRWXstorageClass:
+                  description: "Specified name of persistence broker RWX storage class"
+                  type: string
+                persiBrokerRWOstorageClass:
+                  description: "Specified name of persistence broker RWO storage class"
+                  type: string
+              type: object
+            image:
+              properties:
+                repository:
+                  description: "Docker Repository containing CFMR image"
+                  type: string
+                tag:
+                  description: "Docker image tag for the CFMR version"
+                  type: string
+                digest:
+                  description: "Docker image digest for the CFMR version"
+                  type: string
+                pullPolicy:
+                  description: "Always, Never, or IfNotPresent. Defaults to Always."
+                  type: string
+              type: object
+            resources:
+              properties:
+                requests:
+                  properties:
+                    cpu:
+                      description: "The requested CPU"
+                      type: string
+                    memory:
+                      description: "The requested memory"
+                      type: string
+                  type: object
+                limits:
+                  properties:
+                    cpu:
+                      description: "The CPU limit"
+                      type: string
+                    memory:
+                      description: "The memory limit"
+                      type: string
+                  type: object
+              type: object
+            rbac:
+              properties:
+                create:
+                  description: "create a service account if one does not exist"
+                  type: boolean
+                existingServiceAccount:
+                  description: "name of existing service account if being used"
+                  type: string
+              type: object
+          required:
+          - license
+        status:
+          description:
+          properties:
+            conditions:
+              items:
+                properties:
+                  message:
+                    type: string
+                  reason:
+                    type: string
+                  status:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - status
+                - type
+                type: object
+              type: array
+          type: object
+  version: v2
+  versions:
+  - name: v2
+    served: true
+    storage: true

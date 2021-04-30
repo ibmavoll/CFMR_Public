@@ -1,0 +1,7 @@
+
+inventory:
+  k8sScope: cluster
+  metadata:
+    description: "Setup files for deploying the CFMR Installer Operator"
+    displayName: "CFMR Installer Operator setup"
+    name: cfmrOperatorSetup

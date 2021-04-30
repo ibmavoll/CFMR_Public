@@ -1,0 +1,5 @@
+inventory:
+  metadata:
+    name: ta
+    description: IBM Transformation Advisor information.
+  k8sScope: namespace

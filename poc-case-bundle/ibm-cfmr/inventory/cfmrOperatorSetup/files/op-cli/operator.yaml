@@ -1,0 +1,106 @@
+###############################################################################
+# Licensed Materials - Property of IBM.
+# Copyright IBM Corporation 2020. All Rights Reserved.
+# U.S. Government Users Restricted Rights - Use, duplication or disclosure
+# restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+# Contributors:
+# IBM Corporation - initial API and implementation
+###############################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cfmr-operator
+  namespace: cfmr-operator
+  labels:
+    app.kubernetes.io/instance: cfmr-instance
+    app.kubernetes.io/managed-by: helm
+    app.kubernetes.io/name: cfmr-operator
+    release: cfmr-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: cfmr-operator
+  template:
+    metadata:
+      annotations:
+        productID: c958f891c5764678aa38b173c4950f06
+        productMetric: VIRTUAL_PROCESSOR_CORE
+        productName: IBM Cloud Foundry Migration Runtime
+        productVersion: "4.1.0"
+      labels:
+        app.kubernetes.io/instance: cfmr-instance
+        app.kubernetes.io/managed-by: helm
+        app.kubernetes.io/name: cfmr-operator
+        name: cfmr-operator
+        release: cfmr-operator
+    spec:
+      hostNetwork: false
+      hostPID: false
+      hostIPC: false
+      securityContext:
+        runAsNonRoot: true
+      serviceAccountName: cfmr-operator
+      containers:
+        - name: cfmr-operator
+          # Replace this with the built image name
+          image: ibmcom/cfmr-operator@sha256:85fc387675c605c523c4728554fe4e0458262e2c7837b1b72515525f5aef949b
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              value: ""
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "cfmr-operator"
+            - name: RELATED_IMAGE_CFMR
+              value: cp.icr.io/cp/ibm-cfmr/cfmr-installer@sha256:9ef2810197c452382c565264b23834980e9b6c6539a4ffd1c7492d122691184b
+          securityContext:
+            privileged: false
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            capabilities:
+              drop:
+              - ALL
+          resources:
+            requests:
+              cpu: 400m
+              memory: 500Mi
+            limits:
+              cpu: 750m
+              memory: 600Mi
+          livenessProbe:
+            exec:
+              command:
+              - cd
+              - .
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+              - cd
+              - .
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 3
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - amd64

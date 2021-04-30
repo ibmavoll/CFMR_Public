@@ -1,0 +1,7 @@
+
+inventory:
+  k8sScope: namespace
+  metadata:
+    description: "CFMR Installer Operator custom resource"
+    displayName: "CFMR Installer Operator custom resource"
+    name: cfmrOperator

@@ -1,0 +1,11 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: cfmr-operator-catalog-subscription
+  namespace: REPLACE_NAMESPACE
+spec:
+  channel: REPLACE_CHANNEL_NAME
+  name: cfmr-operator
+  installPlanApproval: Automatic
+  source: cfmr-operator-catalog
+  sourceNamespace: openshift-marketplace

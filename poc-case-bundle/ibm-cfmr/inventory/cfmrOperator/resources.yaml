@@ -1,0 +1,633 @@
+resources:
+  metadata:
+    name: cfmrOperator
+  resourceDefs:
+    containerImages:
+    - image: cp/ibm-cfmr/cfmr-installer
+      tag: 1.3.0
+      digest: sha256:9ef2810197c452382c565264b23834980e9b6c6539a4ffd1c7492d122691184b
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/quarks-operator
+      tag: v7.1.3-0.g0ce050b
+      digest: sha256:7a42cb684b116875c83b5cc25662792cb4e1aabf59241f13cd58075277823e33
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/coredns
+      tag: 0.1.0-1.6.7-bp152.1.19
+      digest: sha256:4b5340324e8712764913ae2d3d5f53f9ca36a9de7d6159a942024981f8c17ab2
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/kubecf-kubectl
+      tag: v1.19.2
+      digest: sha256:611fe25ae43583750277b070a33645be8cc0cffcc364d87a8b3a9b37ae5cf9d4
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/quarks-job
+      tag: v1.0.213
+      digest: sha256:760eee87f839413c18bd90d95e5b4aa1d325ba91c452b23212083570ef4204e4
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/quarks-secret
+      tag: v1.0.754
+      digest: sha256:f059af4de8ed4501081c71bc40581320599324d6f689a5752fa2b430663d07a4
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/quarks-statefulset
+      tag: v1.0.1311
+      digest: sha256:f6c0a990a2a80a934863c5c3a5456d744d6afb311d6fd2d9f20d2fcfd8f84fe0
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/bits-service
+      tag: bits-1.0.21-cflinuxfs3
+      digest: sha256:227deecd3a09ccf5082c770dda9eb8ed4742caa4af5008e39036509b616acf7e
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/capi
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-1.98.0
+      digest: sha256:02d5e6402148a47b70f87d3baa9c82f3f8c954cb984cd9a15028b6004c704dfe
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/cf-cli
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-1.29.0
+      digest: sha256:349af17291ed0f3da841a78400a18dd9b9c0b553f20d68ff0230e4a4c7af7973
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/cf-networking
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-2.33.0
+      digest: sha256:b29ad0d067fc52f0bbc2cf9819e03f209940332b2f06b883e9654221b873f176
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/credhub
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-2.8.0
+      digest: sha256:e130b186c36ee177dc024083a1f217e6f342f16df2171a40ead65287162283cd
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/diego
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-2.48.0
+      digest: sha256:0cd0c8e2b7e84432cb7dbc5cb064d6660a232b50ef63b83105eab5d61e045769
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/eirini-dns-aliases
+      tag: 0.0.0-32.g585bc34d
+      digest: sha256:89aa623c7544c050285fd204f0c1fe5b8c5b1e011e59c43b3f8ef7669ed8945c
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/eirinix-loggregator-bridge
+      tag: v0.0.0-0.g7da9e04
+      digest: sha256:ecacd00122c1be7e945bb76c030979ed25448c884166e2912f64f61420e1fe3e
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/eirinix-persi-broker
+      tag: v0.0.0-g0c241e7
+      digest: sha256:1fac6923fdfc82b784e8a9b7c66a43bdc2851b8f395f1bcb5df4f9b1d1ea172b
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/eirinix-persi
+      tag: v0.0.0-76.g6b229dd
+      digest: sha256:832487b48db3804a853ba0889b433605dabdd7aec9bcca53b9dba787ffb6d38c
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/eirinix-ssh
+      tag: v0.0.0-0.g09b53c0
+      digest: sha256:734000a6a19c38332aa8052a344715c7eec64c60cec7f956ebbbdec65e09ea6b
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/event-reporter
+      tag: 1.8.0-cflinuxfs3
+      digest: sha256:761c77801c6d9d159e22da3ae2a285cd56f44dc09f2cde7ddb7aa80b99b9132f
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/ingress-nginx-controller
+      tag: v0.41.2
+      digest: sha256:8aa4fda472ec83ae59fe0ce9720684d769ed277ff9bdcbb0169178dc9d1f8e85
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/instance-index-env-injector
+      tag: c101e581d7f5ec01b6970eb2ae1a58df4600f872
+      digest: sha256:845aabdcca78ce9297b542bb943b972578b90c256da250b8c888b6be8261eaa5
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/kubecf-apps-dns
+      tag: 0.1.0
+      digest: sha256:82db593bd6320e48209e1f326ce561f0796df0f5c0ee0537069349363cdca5d3
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/log-cache
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-2.8.0
+      digest: sha256:c66ff1d6d8541d7018d5ac8f51230a95507cc5874128260bdc03203c389f5845
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/loggregator-agent
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-6.1.1
+      digest: sha256:50f0355e0c659dc3a512823fbb947431f6744c61d5d8b79a21e02aeb088ed3fa
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/loggregator
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-106.3.10
+      digest: sha256:84b1cea185b71770891725f9ece6d581352352b83ab9b301d320442854be0e48
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/metrics-collector
+      tag: 1.8.0-cflinuxfs3
+      digest: sha256:11b8a49de0beac26f9a288a712e9004a63d25e80e470e85cd4989f8f94e82c3a
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/nats
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-39
+      digest: sha256:116fd5563677dc2e0d3ab536f78130e7826c904d6cc51fb2ef66c1e34a3d6bfd
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/opi
+      tag: 1.8.0-cflinuxfs3
+      digest: sha256:074a7c0a71026bed2462a9b70f581dd7fe54215c46356d45f9f9efdcf3b1d259
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/route-collector
+      tag: 1.8.0-cflinuxfs3
+      digest: sha256:b19c5254f981fef9c2d26f4e2ec2e87b549d203ae79a39de2f4b52da03ff18d8
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/route-pod-informer
+      tag: 1.8.0-cflinuxfs3
+      digest: sha256:d20f34185e3a69e76754d0b0fe8dfd3d53144108b45661632c9d53e8cd5d463b
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/route-statefulset-informer
+      tag: 1.8.0-cflinuxfs3
+      digest: sha256:8f5bc7769d3086b1544211a9c5727dfb2140250f9cf97c88a6cb83168a3d0426
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/routing
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-0.206.0
+      digest: sha256:2781f5f27e54653a59cfb177c65abb125b817ff4b6d2c3ce76a715a8fbc18044
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/silk
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-2.33.0
+      digest: sha256:173d06b8bc1c275f96920b8ce6266c68fbcd7f637cfce095e42d60df656d25c5
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/staging-reporter
+      tag: 1.8.0-cflinuxfs3
+      digest: sha256:8b2357617d78eff0a341fb95b561ea3f13fe0adc917cbea700a8b03244bd0671
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/statsd-injector
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-1.11.15
+      digest: sha256:b5b05b629b7d4d542ec42a25faf803747153b1b2f5ae273b340d68ffae07193e
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/uaa
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-74.24.0
+      digest: sha256:96ff2818a190113eae3c841615d14eabd4d1aaca552e5ee7928bc41d834389bb
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/pxc
+      tag: 0.9.11
+      digest: sha256:c3a0d231824d2d2920696411d17626d473d408be299a7ca13bbb1f614887b05d
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/recipe-downloader
+      tag: 1.8.0-cflinuxfs3
+      digest: sha256:85344e2c21f0c872b782619e435fb56f2ea632f4bd4333a3e6be7edf4e341680
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/recipe-executor
+      tag: 1.8.0-cflinuxfs3
+      digest: sha256:0cf7ad45b9344909a70d358e94fd636b9bca12ac7187e141a7dca657723e0fec
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/recipe-uploader
+      tag: 1.8.0-cflinuxfs3
+      digest: sha256:6ee1918c913e4f1e5463bad3fdef240a57811821eb9b1f4389c57752b398af3a
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/kube-webhook-certgen
+      tag: v1.5.0
+      digest: sha256:f2fe9a0f3be274579e2d3a71c9d2180ab8e21c7203bcad74f653615d7eaeb5e0
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/eirinix-ssh-proxy-setup
+      tag: v0.0.0-g9d08cc7
+      digest: sha256:05df2a23eec0314af430801c8d0cc6dd6bf74f48b6046467aecd06c457507b90
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/eirinix-persi-broker-setup
+      tag: v0.0.0-g9d08cc7
+      digest: sha256:c449f674383ce278df3757d11345811464a6d1c799a141f00a9a1e54e824308a
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/cf-smoke-tests
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-41.0.1
+      digest: sha256:70fb721e5f4432ff5e15ef54b53d7a8ce8869457d5cdbad805de7539f4c46a72
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/binary-buildpack
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-1.0.36
+      digest: sha256:abacccf79caa75e00c828c039ba35c0d644de4806edae793ac5348526c046e24
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/dotnet-core-buildpack
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-2.3.13
+      digest: sha256:4c04b14a1341a823057ddc1ccda49ee9e8b3c3bd0f86477b9afce764ae8882d5
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/go-buildpack
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-1.9.16
+      digest: sha256:3e7ea9d814a2a608ff41b3e4fb964515a34ae4859668a1f21d9d84163872695d
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/java-buildpack
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-4.32.1
+      digest: sha256:c458badf3768788a61b112d56f9bc00b39f46fb16e6b637e6e78826c48df7fb0
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/nodejs-buildpack
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-1.7.25
+      digest: sha256:b71465f42587a7ca63c7bda3851561c9479609efe105c4d54bee1de182b09f68
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/nginx-buildpack
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-1.1.12
+      digest: sha256:ee06f865b9d6289b0a9db7794768927e5a793fd0b45ba831cc401c2854e47f7a
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/r-buildpack
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-1.1.7
+      digest: sha256:c1c4704e37b2b789200158cbd6888b0065000787ff270739924d175f9b50b466
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/php-buildpack
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-4.4.19
+      digest: sha256:dda7ef777d69b462d387cab260606cba2656472f719d799dbf517ef93b930288
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/python-buildpack
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-1.7.18
+      digest: sha256:e3388e194295383cb69e3a01d63e398a8127f15dec504f4d71ac1560dfc4ccbe
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/ruby-buildpack
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-1.8.23
+      digest: sha256:697a06efffdfae2a3cf3bdcd0c1e0d6c1616e28c1dc838da455dddc72b632b40
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/staticfile-buildpack
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-1.5.9
+      digest: sha256:2e442bcf2661c544ba67f0ce3070f6257d09c7b7ebeff4f633195a8cf7a4beac
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/eirinix-annotate
+      tag: 1.0.0
+      digest: sha256:fac0187d3af34f4fd841efd8eb666aa17cf7ea2012031b0dab8cd61411ffbf32
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/ubi-stratos-bk-build-base
+      tag: cfmr-ga
+      digest: sha256:c3377b44904df9847f8703323dbe73e55f5427b64a6a90c59cfb96c547858fa2
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/ubi-stratos-db-base
+      tag: cfmr-ga
+      digest: sha256:3faf73dd60a03638bf9bc469a71eac123241cf9b795372f1ab77b0f4c9c2d80d
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/ubi-stratos-init-base
+      tag: cfmr-ga
+      digest: sha256:65f2ac592d267a17787d2a9bcb3aef5a7a67889c1cfc36125b0b71d44368b3cc
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/ubi-stratos-bk-base
+      tag: cfmr-ga
+      digest: sha256:cb9a16b404ee3b4106cf5ee24b482fc9286a967f2ee6748f068dd543d4a1da8e
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/stratos-kube-terminal
+      tag: 4.4.0-bc65c315c
+      digest: sha256:43a3a1b1c59163d5972a28a0f45c4c8f25376e0b5cfaf1458f0b56f04e3fb879
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/ubi-stratos-jetstream
+      tag: 4.4.0-bc65c315c
+      digest: sha256:b60084a8c5b64453987f2d8c5fc9d82aff7dc13722b52144c2031e1c28acc632
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/ubi-stratos-console
+      tag: 4.4.0-bc65c315c
+      digest: sha256:1e1ad5e4c095bd0d8599c73ed3cb163ba824348e59ffb58fd4ac6cb94da60dba
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/ubi-stratos-mariadb
+      tag: 4.4.0-bc65c315c
+      digest: sha256:3d1e654ecfe0e714c1cf25df4df5320862b88301b5a5fae77bed898ae9caf880
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/ubi-stratos-config-init
+      tag: 4.4.0-bc65c315c
+      digest: sha256:788a7f683a135234708fd041c33708ffafb7d0c306f551630966d5897d13ad95
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/ubi-stratos-analyzers
+      tag: 4.4.0-bc65c315c
+      digest: sha256:0dd58c49b65e2112cd6bfab1f2bb330e0a2b829f5c3a86587424670fad48eaa3
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/app-autoscaler
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-3.0.1
+      digest: sha256:0269be2bc46fc0558d2a41e56ff1f0a98c0175229fc37d106aa3985874d0fce0
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/postgres
+      tag: rh-ubi7-7.9-228-7.0.0_374.gb8e8e6af-43
+      digest: sha256:107f11887a532001fb6f101cfbedfc176ef832e097a0399cbcdb878f0df93ad6
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    - image: cp/ibm-cfmr/cfmr-service-broker
+      tag: 1.0.0
+      digest: sha256:80518490cd2fb89b5541bb00c544c65c15f90a7ef043d0cafb8b5b1e7a829831
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: cp.icr.io
+      platform:
+        architecture: amd64
+        os: linux
+    files:
+    - mediaType: application/vnd.case.resource.k8s.v1+yaml
+      ref: cfmr.ibm.com_v2_ibmcfmrprod_cr.yaml
+    - mediaType: application/vnd.case.resource.script.bash.v1
+      ref: launch-impl.sh
+    - mediaType: application/vnd.case.resource.script.bash.v1+launcher
+      ref: launch.sh

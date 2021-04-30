@@ -1,0 +1,57 @@
+prereqs:
+  prereqDefs:
+    ibmCoreServices: {}
+
+    k8sResources:                     # Kubernetes resource instance resolver
+      restrictedSCC:
+        metadata:
+          description: "Namespace is using the restricted SecurityContextConstraint"
+        kind: SecurityContextConstraints
+        apiGroup: security.openshift.io
+        name: restricted
+        version: v1
+      workerIntelLinux:                 # At least one amd64 node
+        metadata:
+          description: "Cluster has at least one amd64 node"
+        kind: node
+        apiGroup: ""
+        version: v1
+        selector:
+          matchExpressions:
+          - {key: beta.kubernetes.io/arch, operator: In, values: [amd64]}
+          - {key: beta.kubernetes.io/os, operator: In, values: [linux]}
+          - {key: node-role.kubernetes.io/worker, operator: Exists}
+    k8sResourceVersions: {}
+
+    k8sDistros:
+      openshift:
+        metadata:
+          description: "Openshift Kubernetes version is 1.16.0 or greater"
+        distribution: openshift
+        semver: ">=1.16.0"
+      kubernetes:
+        metadata:
+          description: "Kubernetes version is 1.16.0 or greater"
+        distribution: kubernetes
+        semver: ">=1.16.0"
+    helm: {}
+
+    client:
+      kubectl:
+        metadata:
+          description: "Client has kubectl version 1.16.0 or greater"
+        command: "kubectl"
+        versionArgs: "version"
+        versionRegex: "GitVersion:\"v1.1[6-9].[0-9]*"
+      oc:
+        metadata:
+          description: "Client has oc version 4.4.0 or greater"
+        command: "oc"
+        versionArgs: "version --client"
+        versionRegex: "4.[4-9]*.[0-9]*"
+      cloudctl:
+        metadata:
+          description: "Client has cloudctl version v3.5.x"
+        command: "cloudctl"
+        versionArgs: "version"
+        versionRegex: "Client Version: v3.[5-9]*.*"

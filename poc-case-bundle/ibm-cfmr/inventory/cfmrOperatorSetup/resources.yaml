@@ -1,0 +1,104 @@
+resources:
+  metadata:
+    name: cfmrOperatorSetup
+  resourceDefs:
+    helmCharts:
+    - chart: quarks
+      mediaType: application/vnd.case.resource.helm.chart.v1
+      metadata:
+        description: A Helm chart for quarks-operator
+        name: quarks
+      version: '7.1.3+0.g0ce050b'
+      repositoryURLs:
+      - https://hcl-cloud-native-labs.github.io/cf4ocp-helm-charts
+    - chart: kubecf
+      mediaType: application/vnd.case.resource.helm.chart.v1
+      metadata:
+        description: A Helm chart for KubeCF
+        name: kubecf
+      version: '2.7.12'
+      repositoryURLs:
+      - https://hcl-cloud-native-labs.github.io/cf4ocp-helm-charts
+    - chart: console
+      mediaType: application/vnd.case.resource.helm.chart.v1
+      metadata:
+        description: A Helm chart for deploying Stratos
+        name: console
+      version: '4.4.0'
+      repositoryURLs:
+      - https://cloudfoundry.github.io/stratos
+    - chart: chartmuseum
+      mediaType: application/vnd.case.resource.helm.chart.v1
+      metadata:
+        description: Host your own Helm Chart Repository
+        name: chartmuseum
+      version: '3.1.0'
+      repositoryURLs:
+      - https://chartmuseum.github.io/charts
+    containerImages:
+    - image: ibmcom/cfmr-operator
+      tag: 2.0.0
+      digest: sha256:85fc387675c605c523c4728554fe4e0458262e2c7837b1b72515525f5aef949b
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: docker.io
+      platform:
+        architecture: amd64
+        os: linux
+    - metadata:
+        displayName: IBM Cloud Foundry Migration Runtime OLM Bundle
+        name: cfmr_operator_bundle
+        operators_operatorframework_io:
+          bundle:
+            cpcicd_ibm_com:
+              targetCatalogs:
+                catalogRefs:
+                - ibm-public: {}
+            mediaType: registry+v1
+      image: ibmcom/cfmr-operator-bundle
+      tag: latest
+      digest: sha256:6368e068802ff34e48c5d5d98fb19dfa9b7a317122ec198c46a66e62d3827ab3
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: docker.io
+      platform:
+        architecture: amd64
+        os: linux
+    - metadata:
+        displayName: IBM Cloud Foundry Migration Runtime OLM Catalog
+        name: cfmr_operator_catalog
+        operators_operatorframework_io:
+          catalog:
+            mediaType: registry+v1
+      image: ibmcom/cfmr-operator-catalog
+      tag: latest
+      digest: sha256:115a2dac05abf47f2b310921f9ae28eddd497fda79799377355fcbf2d5be5b48
+      mediaType: application/vnd.docker.distribution.manifest.v2
+      registries:
+      - host: docker.io
+      platform:
+        architecture: amd64
+        os: linux
+    files:
+    - mediaType: application/vnd.case.resource.k8s.v1+yaml
+      ref: op-olm/operator_group.yaml
+    - mediaType: application/vnd.case.resource.k8s.v1+yaml
+      ref: op-olm/subscription.yaml
+    - mediaType: application/vnd.case.resource.k8s.v1+yaml
+      ref: op-olm/catalog_source.yaml
+    - mediaType: application/vnd.case.resource.k8s.v1+yaml
+      ref: op-cli/operator.yaml
+    - mediaType: application/vnd.case.resource.k8s.v1+yaml
+      ref: op-cli/role_binding.yaml
+    - mediaType: application/vnd.case.resource.k8s.v1+yaml
+      ref: op-cli/role.yaml
+    - mediaType: application/vnd.case.resource.k8s.v1+yaml
+      ref: op-cli/service_account.yaml
+    - mediaType: application/vnd.case.resource.k8s.v1+yaml
+      ref: op-cli/cfmr.ibm.com_ibmcfmrprods_crd.yaml
+    - mediaType: application/vnd.case.resource.script.bash.v1
+      ref: airgap.sh
+    - mediaType: application/vnd.case.resource.script.bash.v1
+      ref: launch-impl.sh
+    - mediaType: application/vnd.case.resource.script.bash.v1+launcher
+      ref: launch.sh

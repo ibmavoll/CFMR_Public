@@ -1,0 +1,390 @@
+
+actions:
+    metadata:
+        name: cfmrOperatorSetup
+        description: The actions required to install the ibm-cfmr cluster resources
+    actionDefs:
+        installOperator:
+            metadata:
+                name: "installOperator"
+                description: "install the ibm-cfmr operator"
+                case.launcher.type: "script"
+                case.cli.alias: "install-operator"
+                case.launcher.isdefault: true
+            roles:
+            - clusterAdmin
+            requires:
+                metadata:
+                    message:
+                        onFailure: |
+                            The installOperator action must be run on OpenShift Container Platform on amd64 Linux.
+                            The minimum level of Kubernetes on each platform are described in the CASE prerequisites.
+                and:
+                - "/case/prereqs/k8sResources/workerIntelLinux"
+                - "/case/prereqs/k8sResources/restrictedSCC"
+                - "/case/prereqs/k8sDistros/kubernetes"
+                - "/case/prereqs/k8sDistros/openshift"
+            # User must have the ability to create cluster roles and custom resource definitions
+            k8sPermissions:
+                rules:
+                - rule:
+                      group: rbac.authorization.k8s.io
+                      resource: clusterroles
+                      verbs:
+                      - get
+                      - list
+                      - watch
+                      - create
+                      - patch
+                      - update
+                      version: '*'
+                - rule:
+                      group: apiextensions.k8s.io
+                      resource: customresourcedefinitions
+                      verbs:
+                      - get
+                      - list
+                      - watch
+                      - create
+                      - patch
+                      - update
+                      version: v1beta1
+
+        installOperatorNative:
+            metadata:
+                name: "installOperatorNative"
+                description: "Installs the ibm-cfmr operator by applying k8s manifests"
+                case.launcher.type: "script"
+                case.cli.alias: "install-operator-native"
+            roles:
+            - clusterAdmin
+            # must be ocp AND Kubernetes 1.16.0 or later running on amd64, s390x or ppc64le Linux
+            requires:
+                metadata:
+                    message:
+                        onFailure: |
+                            The installOperatorNative action must be run on OpenShift Container Platform on amd64 Linux.
+                            The minimum level of Kubernetes on each platform are described in the CASE prerequisites.
+                and:
+                - "/case/prereqs/k8sResources/workerIntelLinux"
+                - "/case/prereqs/k8sDistros/kubernetes"
+                - "/case/prereqs/k8sDistros/openshift"
+            # User must have the ability to create cluster roles and custom resource definitions
+            k8sPermissions:
+                rules:
+                - rule:
+                      group: rbac.authorization.k8s.io
+                      resource: clusterroles
+                      verbs:
+                      - get
+                      - list
+                      - watch
+                      - create
+                      - patch
+                      - update
+                      version: '*'
+                - rule:
+                      group: apiextensions.k8s.io
+                      resource: customresourcedefinitions
+                      verbs:
+                      - get
+                      - list
+                      - watch
+                      - create
+                      - patch
+                      - update
+                      version: v1beta1
+
+        uninstallOperator:
+            metadata :
+                name: "uninstallOperator"
+                description: "uninstall the ibm-cfmr operator"
+                case.launcher.type: "script"
+                case.cli.alias: "uninstall-operator"
+            roles:
+            - clusterAdmin
+            # must be ocp AND Kubernetes 1.16.0 or later running on amd64 Linux
+            requires:
+                metadata:
+                    message:
+                        onFailure: |
+                            The uninstallOperator action must be run on OpenShift Container Platform on amd64 Linux.
+                            The minimum level of Kubernetes on each platform are described in the CASE prerequisites.
+                and:
+                - "/case/prereqs/k8sResources/workerIntelLinux"
+                - "/case/prereqs/k8sDistros/kubernetes"
+                - "/case/prereqs/k8sDistros/openshift"
+            k8sPermissions:
+                rules:
+                - rule:
+                      group: rbac.authorization.k8s.io
+                      resource: clusterroles
+                      verbs:
+                      - '*'
+                - rule:
+                      group: apiextensions.k8s.io
+                      resource: customresourcedefinitions
+                      verbs:
+                      - '*'
+
+        uninstallOperatorNative:
+            metadata :
+                name: "uninstallOperatorNative"
+                description: "uninstall the ibm-cfmr operator"
+                case.launcher.type: "script"
+                case.cli.alias: "uninstall-operator-native"
+            roles:
+            - clusterAdmin
+            # must be ocp AND Kubernetes 1.16.0 or later running on amd64 Linux
+            requires:
+                metadata:
+                    message:
+                        onFailure: |
+                            The uninstallOperatorNative action must be run on OpenShift Container Platform on amd64 Linux.
+                            The minimum level of Kubernetes on each platform are described in the CASE prerequisites.
+                and:
+                - "/case/prereqs/k8sResources/workerIntelLinux"
+                - "/case/prereqs/k8sDistros/kubernetes"
+                - "/case/prereqs/k8sDistros/openshift"
+            k8sPermissions:
+                rules:
+                - rule:
+                      group: rbac.authorization.k8s.io
+                      resource: clusterroles
+                      verbs:
+                      - '*'
+                - rule:
+                      group: apiextensions.k8s.io
+                      resource: customresourcedefinitions
+                      verbs:
+                      - '*'
+
+        # actions related to airgap
+        configureCredsAirgap:
+            metadata:
+                name: "configureCredsAirgap"
+                description: "configures login credentails for an image registry"
+                case.launcher.type: "script"
+                case.cli.alias: "configure-creds-airgap"
+            roles:
+            - clusterAdmin
+            k8sPermissions:
+                rules: []
+
+        configureClusterAirgap:
+            metadata:
+                name: "configureClusterAirgap"
+                description: "configures global pullsecret and imagesourcecontentpolicy"
+                case.launcher.type: "script"
+                case.cli.alias: "configure-cluster-airgap"
+            roles:
+            - clusterAdmin
+            requires:
+                metadata:
+                    message:
+                        onFailure: |
+                            The configureClusterAirgap action must be run on OpenShift Container Platform on amd64 Linux.
+                            The minimum level of Kubernetes on each platform are described in the CASE prerequisites.
+                            The client must have oc installed to execute the launcher script.
+                and:
+                - "/case/prereqs/k8sDistros/kubernetes"
+                - "/case/prereqs/k8sResources/workerIntelLinux"
+                - "/case/prereqs/k8sDistros/openshift"
+                - "/case/prereqs/client/oc"
+            k8sPermissions:
+                rules: []
+
+        mirrorImages:
+            metadata:
+                name: "mirrorImages"
+                description: "Mirrors the images to a local registry using oc"
+                case.launcher.type: "script"
+                case.cli.alias: "mirror-images"
+            roles:
+            - clusterAdmin
+            requires: "/case/prereqs/client/oc"
+            k8sPermissions:
+                rules:
+                - rule:
+                      group: secrets
+                      resource: '*'
+                      verbs:
+                      - get
+                      - list
+                      - watch
+                      - create
+                      - patch
+                      - update
+
+        # actions related to catalog
+        installCatalog:
+            metadata:
+                name: "installCatalog"
+                description: "install the ibm-cfmr operator catalog"
+                case.launcher.type: "script"
+                case.cli.alias: "install-catalog"
+            roles:
+            - clusterAdmin
+            requires:
+                metadata:
+                    message:
+                        onFailure: |
+                            The installCatalog action must be run on OpenShift Container Platform on amd64 Linux.
+                            The minimum level of Kubernetes on each platform are described in the CASE prerequisites.
+                            The client must have oc installed to execute the launcher script.
+                and:
+                - "/case/prereqs/k8sDistros/kubernetes"
+                - "/case/prereqs/k8sDistros/openshift"
+                - "/case/prereqs/k8sResources/workerIntelLinux"
+                - "/case/prereqs/client/oc"
+                - "/case/prereqs/client/cloudctl"
+            k8sPermissions:
+                rules: []
+
+        uninstallCatalog:
+            metadata:
+                name: "uninstallCatalog"
+                description: "uninstall the ibm-cfmr operator catalog"
+                case.launcher.type: "script"
+                case.cli.alias: "uninstall-catalog"
+            roles:
+            - clusterAdmin
+            requires:
+                metadata:
+                    message:
+                        onFailure: |
+                            The uninstallCatalog action must be run on OpenShift Container Platform on amd64 Linux.
+                            The minimum level of Kubernetes on each platform are described in the CASE prerequisites.
+                            The client must have oc installed to execute the launcher script.
+                and:
+                - "/case/prereqs/k8sDistros/kubernetes"
+                - "/case/prereqs/k8sResources/workerIntelLinux"
+                - "/case/prereqs/k8sDistros/openshift"
+                - "/case/prereqs/client/oc"
+                - "/case/prereqs/client/cloudctl"
+            k8sPermissions:
+                rules: []
+
+        # actions related to local docker registry
+
+        initRegistry:
+            metadata:
+                name: "initRegistry"
+                description: "Initialize a local docker registry"
+                case.launcher.type: "script"
+                case.cli.alias: "init-registry"
+            roles:
+            - clusterAdmin
+            requires:
+                and:
+                - "/case/prereqs/client/openssl"
+                - "/case/prereqs/client/htpasswd"
+            k8sPermissions:
+                rules: []
+
+        startRegistry:
+            metadata:
+                name: "startRegistry"
+                description: "Start a local docker registry container"
+                case.launcher.type: "script"
+                case.cli.alias: "start-registry"
+            roles:
+            - clusterAdmin
+            requires:
+                or:
+                - "/case/prereqs/client/podman"
+                - "/case/prereqs/client/docker"
+            k8sPermissions:
+                rules: []
+
+        stopRegistry:
+            metadata:
+                name: "stopRegistry"
+                description: "Stop a local docker registry container"
+                case.launcher.type: "script"
+                case.cli.alias: "stop-registry"
+            roles:
+            - clusterAdmin
+            requires:
+                or:
+                - "/case/prereqs/client/podman"
+                - "/case/prereqs/client/docker"
+            k8sPermissions:
+                rules: []
+
+        # actions related to local helm chart repo
+
+        initHelmRepository:
+            metadata:
+                name: "initHelmRepository"
+                description: "Initialize a local helm chart repository"
+                case.launcher.type: "script"
+                case.cli.alias: "init-helm-repository"
+            roles:
+            - clusterAdmin
+            requires:
+                metadata:
+                    message:
+                        onFailure: |
+                            The initHelmRepository action must be run on OpenShift Container Platform on amd64 Linux.
+                            The minimum level of Kubernetes on each platform are described in the CASE prerequisites.
+                            The client must have oc installed to execute the launcher script.
+                            The client must have helm installed to execute the launcher script.
+                and:
+                - "/case/prereqs/k8sDistros/kubernetes"
+                - "/case/prereqs/k8sResources/workerIntelLinux"
+                - "/case/prereqs/k8sDistros/openshift"
+                - "/case/prereqs/client/oc"
+                - "/case/prereqs/client/helm"
+            k8sPermissions:
+                rules: []
+
+        # actions related to local helm chart repo
+
+        loadHelmRepository:
+            metadata:
+                name: "LoadHelmRepository"
+                description: "Load a local helm chart repository with bundled charts"
+                case.launcher.type: "script"
+                case.cli.alias: "load-helm-repository"
+            roles:
+            - clusterAdmin
+            requires:
+                metadata:
+                    message:
+                        onFailure: |
+                            The loadHelmRepository action must be run on OpenShift Container Platform on amd64 Linux.
+                            The minimum level of Kubernetes on each platform are described in the CASE prerequisites.
+                            The client must have oc installed to execute the launcher script.
+                            The client must have helm installed to execute the launcher script.
+                and:
+                - "/case/prereqs/k8sDistros/kubernetes"
+                - "/case/prereqs/k8sResources/workerIntelLinux"
+                - "/case/prereqs/k8sDistros/openshift"
+                - "/case/prereqs/client/helm"
+                - "/case/prereqs/client/helm push"
+            k8sPermissions:
+                rules: []
+
+        deleteHelmRepository:
+            metadata:
+                name: "deleteHelmRepository"
+                description: "Delete local helm chart repository"
+                case.launcher.type: "script"
+                case.cli.alias: "delete-helm-repository"
+            roles:
+            - clusterAdmin
+            requires:
+                metadata:
+                    message:
+                        onFailure: |
+                            The deleteHelmRepository action must be run on OpenShift Container Platform on amd64 Linux.
+                            The minimum level of Kubernetes on each platform are described in the CASE prerequisites.
+                            The client must have oc installed to execute the launcher script.
+                and:
+                - "/case/prereqs/k8sDistros/kubernetes"
+                - "/case/prereqs/k8sResources/workerIntelLinux"
+                - "/case/prereqs/k8sDistros/openshift"
+                - "/case/prereqs/client/oc"
+            k8sPermissions:
+                rules: []

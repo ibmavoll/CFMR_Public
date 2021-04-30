@@ -1,0 +1,116 @@
+
+actions:
+  actionDefs:
+    applyCustomResources:
+      metadata:
+        name: applyCustomResources
+        displayName: Apply custom resources
+        displayDescription: Install a CFMR agent
+        case.launcher.type: "script"
+        case.cli.alias: "apply-custom-resources"
+        case.launcher.isdefault: false
+      requires:
+        and:
+        - "/case/prereqs/k8sDistros/openshift"
+        - "/case/prereqs/k8sResources/workerIntelLinux"
+        metadata:
+          message:
+            onFailure: |
+                The setup action must be run on one of OpenShift Container
+                Platform on amd64 Linux. The minimum level
+                of Kubernetes on each platform are described in the CASE
+                prerequisites.
+      roles:
+      - namespaceAdmin
+      k8sPermissions:
+        rules:
+        - rule:
+            group: ""
+            resource: namespaces
+            verbs:
+            - get
+            version: ""
+        - rule:
+            group: ""
+            resource: configmaps
+            verbs:
+            - '*'
+            version: ""
+        - rule:
+            group: ""
+            resource: secrets
+            verbs:
+            - '*'
+            version: ""
+        - rule:
+            group: ""
+            resource: persistentvolumeclaims
+            verbs:
+            - '*'
+            version: ""
+        - rule:
+            group: ""
+            resource: services
+            verbs:
+            - '*'
+            version: ""
+        - rule:
+            group: apps
+            resource: statefulsets
+            verbs:
+            - '*'
+            version: ""
+        - rule:
+            group: monitoring.coreos.com
+            resource: servicemonitors
+            verbs:
+            - get
+            - create
+            version: ""
+        - rule:
+            group: apps
+            resource: deployments/finalizers
+            verbs:
+            - update
+            version: ""
+        - rule:
+            group: ""
+            resource: pods
+            verbs:
+            - get
+            version: ""
+        - rule:
+            group: apps
+            resource: replicasets
+            verbs:
+            - get
+            version: ""
+        - rule:
+            group: apps
+            resource: deployments
+            verbs:
+            - get
+            version: ""
+        - rule:
+            group: cfmr.ibm.com
+            resource: '*'
+            verbs:
+            - '*'
+            version: ""
+    deleteCustomResources:
+      metadata:
+        name: deleteCustomResources
+        displayName: Delete custom resources
+        displayDescription: Delete a CFMR agent
+        case.launcher.type: "script"
+        case.cli.alias: "delete-custom-resources"
+        case.launcher.isdefault: false
+      roles:
+      - namespaceAdmin
+      k8sPermissions:
+        rules:
+        - rule:
+            group: cfmr.ibm.com
+            resource: '*'
+            verbs:
+            - '*'
