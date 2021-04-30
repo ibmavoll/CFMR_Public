@@ -1,0 +1,96 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    openshift.io/description: "Cloud Foundry Migration Runtime Service Broker"
+    openshift.io/display-name: ""
+  name: cfmr-broker
+spec:
+  finalizers:
+  - kubernetes
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    openshift.io/description: "Cloud Foundry Migration Runtime Dynamically Generated Spring Cloud Services Instances"
+    openshift.io/display-name: ""
+  name: spring-services-deploy
+spec:
+  finalizers:
+  - kubernetes
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: spring-cloud-services-uaa-zone-secret
+  namespace: spring-services-deploy
+stringData:
+  clientid: p-spring-cloud-services-worker
+  clientsecret: DWiPkHI83ZVg
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    openshift.io/description: "Cloud Foundry Migration Runtime Dynamically Generated Redis Service Instances"
+    openshift.io/display-name: ""
+  name: redis-deploy
+spec:
+  finalizers:
+  - kubernetes
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    openshift.io/description: "Cloud Foundry Migration Runtime Dynamically Generated mySQL Service Instances"
+    openshift.io/display-name: ""
+  name: mysql-deploy
+spec:
+  finalizers:
+  - kubernetes
+---
+kind: SecurityContextConstraints
+apiVersion: security.openshift.io/v1
+metadata:
+  name: rabbitmq-cluster
+allowPrivilegedContainer: false
+runAsUser:
+  type: MustRunAsRange
+seLinuxContext:
+  type: MustRunAs
+fsGroup:
+  type: MustRunAs
+supplementalGroups:
+  type: RunAsAny
+requiredDropCapabilities:
+  - "ALL"
+allowedCapabilities:
+  - "FOWNER"
+  - "CHOWN"
+  - "DAC_OVERRIDE"
+volumes:
+  - "configMap"
+  - "secret"
+  - "persistentVolumeClaim"
+  - "downwardAPI"
+  - "emptyDir"
+  - "projected"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    openshift.io/description: "Cloud Foundry Migration Runtime Dynamically Generated RabbitMQ Service Instances"
+    openshift.io/display-name: ""
+    openshift.io/sa.scc.mcs: s0:c26,c5
+    openshift.io/sa.scc.supplemental-groups: 999/1
+    openshift.io/sa.scc.uid-range: 0-999
+    openshift.io/scc: rabbitmq-cluster
+  name: rabbitmq-deploy
+spec:
+  finalizers:
+  - kubernetes
+

@@ -1,0 +1,1362 @@
+---
+# The main Broker configuration.  This defines what classes and plans a client
+# can see, along with what can be configured.  Templates are bound to a plan and
+# are rendered and created when a service instance/binding is created, then cleaned
+# up when deleted.
+apiVersion: servicebroker.couchbase.com/v1alpha1
+kind: ServiceBrokerConfig
+metadata:
+  name: cfmr-service-broker
+  namespace: cfmr-broker
+spec:
+  # Catalog is simply verbatim what will be exposed on GET /v2/catalog
+  catalog:
+    services:
+    - id: 7c23bd35-a471-4fa3-88a6-1ba6da789040
+      name: network-policy
+      description: Configuring OpenShift Service endpoints and pod to pod network policies
+      metadata:
+        displayName: network-policy
+      tags:
+      - network
+      - policy
+      - k8s
+      - ibm
+      - cfmr
+      bindable: true
+      planUpdatable: false
+      plans:
+      - id: a020623a-852c-448d-b327-36518aa64beb
+        name: c2c
+        description: Configures container to container (pod to pod) communication using K8s services and policies
+        schemas:
+          serviceInstance:
+            create:
+              parameters:
+                $schema: "http://json-schema.org/draft-04/schema#"
+                type: object
+                required:
+                  - source-guid
+                  - destination-appname
+                  - destination-guid
+                properties:
+                  source-guid:
+                    description: "The CloudFoundry App --guid value of the application to connect from"
+                    type: string
+                  destination-appname:
+                    description: "The CloudFoundry App name of the application to connect to"
+                    type: string
+                  destination-guid:
+                    description: "The CloudFoundry App --guid value of the application to connect to"
+                    type: string
+                  ports:
+                    description: "Named Port or Array of named ports for connection to destination app (Default: 8080)"
+                    type: array
+                    items:
+                      type: object
+    - id: a4ee6be4-06d1-4b6f-822d-81199ae59c73
+      name: p-rabbitmq
+      description: An open-source message-broker software using AMQP
+      metadata:
+        displayName: p-rabbitmq
+        imageUrl: "https://joshisa.github.io/kubetube/rabbitmq.png"     
+      tags:
+      - messaging
+      - messaging-queue
+      - rabbitmq
+      - amqp
+      - pivotal
+      - ibm
+      - cfmr
+      bindable: true
+      planUpdatable: false
+      plans:
+      - id: 08bbd5d6-e216-4189-9d51-5c28393a452d
+        name: standard
+        description: RabbitMQ service to provide a cluster of three on-demand instances of this high-performance multi-protocol messaging broker.
+      - id: f482cc1f-099e-48a6-9fe7-7ab5dd762cc4
+        name: single
+        description: RabbitMQ service to provide a single on-demand instance of this high-performance multi-protocol messaging broker.
+    - id: 259bf091-c825-424e-b44c-4334a8767069
+      name: p-redis
+      description: Redis service to provide on-demand dedicated instances configured as a cache.
+      metadata:
+        displayName: p-redis
+        imageUrl: "https://joshisa.github.io/kubetube/rabbitmq.png"     
+      label: "p-redis"
+      tags:
+      - redis
+      - pivotal
+      - ibm
+      - cfmr
+      bindable: true
+      planUpdatable: false
+      plans:
+      - id: 320b6437-8642-4b0b-a945-6eb1f3d61422
+        name: small-cache
+        description: Redis service to provide on-demand small dedicated instances configured as a cache. 
+        schemas:
+          serviceInstance:
+            create:
+              parameters:
+                $schema: "http://json-schema.org/draft-04/schema#"
+                type: object
+                properties:
+                  maxmemory-policy:
+                    description: "Sets the behavior Redis follows when maxmemory is reached"
+                    type: string
+                    enum: ["allkeys-lru","noeviction","volatile-lru","allkeys-random","volatile-ttl","volatile-lfu","allkeys-lfu"]
+                    default: "allkeys-lru"
+                  notify-keyspace-events:
+                    description: "Sets the keyspace notifications for events that affect the Redis data set"
+                    type: string
+                    enum: ["K","E","g","$","l","s","h"]
+                    default: ""
+                  slowlog-log-slower-than:
+                    description: "Sets the threshhold execution time (seconds). Commands that exceed this execution time are added to the slowlog"
+                    type: number
+                    minimum: 0
+                    maximum: 20000
+                    default: 10000
+                  slowlog-max-len:
+                    description: "Sets the length (count) of the slowlog queue"
+                    type: number
+                    minimum: 1
+                    maximum: 2024
+                    default: 128
+            update:
+              parameters:
+                $schema: "http://json-schema.org/draft-04/schema#"
+                type: object
+                properties:
+                  maxmemory-policy:
+                    description: "Sets the behavior Redis follows when maxmemory is reached"
+                    type: string
+                    enum: ["allkeys-lru","noeviction","volatile-lru","allkeys-random","volatile-ttl","volatile-lfu","allkeys-lfu"]
+                    default: "allkeys-lru"
+                  notify-keyspace-events:
+                    description: "Sets the keyspace notifications for events that affect the Redis data set"
+                    type: string
+                    enum: ["K","E","g","$","l","s","h"]
+                    default: ""
+                  slowlog-log-slower-than:
+                    description: "Sets the threshhold execution time (seconds). Commands that exceed this execution time are added to the slowlog"
+                    type: number
+                    minimum: 0
+                    maximum: 20000
+                    default: 10000
+                  slowlog-max-len:
+                    description: "Sets the length (count) of the slowlog queue"
+                    type: number
+                    minimum: 1
+                    maximum: 2024
+                    default: 128
+    - id: c7daaaa7-f4d2-4027-b667-2cbe30aaac84
+      name: p.mysql
+      description: Dedicated instances of MySQL
+      tags:
+      - database
+      - mysql
+      - mariadb
+      - cfmr
+      - ibm
+      bindable: true
+      planUpdatable: false
+      plans:
+      - id: b9cf379b-24e7-45d9-9cb2-9f086bc7e62a
+        name: db-small
+        description: This simple single node topology is inexpensive and good for testing and for apps where HA is not important.
+        schemas:
+          serviceInstance:
+            create:
+              parameters:
+                $schema: "http://json-schema.org/draft-04/schema#"
+                type: object
+                properties:
+                  rootpassword:
+                    description: "Root mySQL password"
+                    type: string
+                  userpassword:
+                    description: "User DB password"
+                    type: string
+                  username:
+                    description: "Username"
+                    type: string
+                  dbname:
+                    description: "Desired DB Name"
+                    type: string
+                  size:
+                    description: "Cluster size"
+                    type: number
+                    default: 1
+                    minimum: 1
+                    maximum: 3
+            update:
+              parameters:
+                $schema: "http://json-schema.org/draft-04/schema#"
+                type: object
+                properties:
+                  rootpassword:
+                    description: "Root mySQL password"
+                    type: string
+                  userpassword:
+                    description: "User DB password"
+                    type: string
+                  username:
+                    description: "Username"
+                    type: string
+                  dbname:
+                    description: "Desired DB Name"
+                    type: string
+                  size:
+                    description: "Cluster size"
+                    type: number
+                    default: 1
+                    minimum: 1
+                    maximum: 3
+    - id: 2f329984-85ad-4dac-8896-2e2e87e5a0b7
+      name: p-service-registry
+      description: Service Registry for Spring Cloud Applications
+      metadata:
+        displayName: p-service-registry
+        imageUrl: "https://joshisa.github.io/kubetube/springnetflix.png"
+      tags:
+      - eureka
+      - discovery
+      - registry
+      - spring-cloud
+      - ibm
+      - cfmr
+      bindable: true
+      planUpdatable: false
+      plans:
+      - id: 32f21a04-e76a-46a8-8be1-a4e7f0e9feff
+        name: standard
+        description: Service Registry for Spring Cloud Applications
+        schemas:
+          serviceInstance:
+            create:
+              parameters:
+                $schema: "http://json-schema.org/draft-04/schema#"
+                type: object
+                properties:
+                  count:
+                    description: "Number of nodes to provision"
+                    type: number
+                    minimum: 1
+                    maximum: 4
+            update:
+              parameters:
+                $schema: "http://json-schema.org/draft-04/schema#"
+                type: object
+                properties:
+                  count:
+                    description: "Number of nodes to provision"
+                    type: number
+                    minimum: 1
+                    maximum: 9
+                  upgrade:
+                    description: "Whether to upgrade the instance"
+                    type: boolean
+                    default: false
+                  force:
+                    description: "When upgrade is set to true, whether to force an upgrade of the instance, even if the instance is already at the latest available service version"
+                    type: boolean
+                    default: false
+    - id: 87133132-dd1c-45a7-8e70-930679ae5f2d
+      name: p.config-server
+      description: "Config Server for Spring Cloud Applications"
+      metadata:
+        displayName: p.config-server
+        imageUrl: "https://joshisa.github.io/kubetube/springcloud.png"
+        longDescription: "Config Server for Spring Cloud Applications running on IBM Cloud Foundry Migration Runtime"
+        providerDisplayName: "IBM"
+        documentationUrl: "https://docs.cloudfoundry.org/services/api.html"
+      tags:
+      - configuration
+      - spring-cloud
+      - ibm
+      - cfmr
+      bindable: true
+      planUpdatable: false
+      plans:
+      - id: 6ecf623e-42c4-47ea-8c56-dd930d322e7a
+        name: standard
+        description: "Config Server for Spring Cloud Applications"
+        schemas:
+          serviceInstance:
+            create:
+              parameters:
+                $schema: "http://json-schema.org/draft-04/schema#"
+                type: object
+                properties:
+                  git:
+                    description: "General parameters used to configure the config-server's default configuration source"
+                    type: object
+                    required:
+                    - uri
+                    properties:
+                      uri:
+                        description: "The URI (http://, https://, or ssh://) of a repository that can be used as the default config source"
+                        type: string
+                        default: "https://github.com/example.git"
+                      label:
+                        description: "The default 'label' that can be used with the default repository if a request is received without a label (e.g. if the spring.config.label property is not set in a client app)"
+                        type: string
+                        default: "master"
+                      searchPaths:
+                        description: "A pattern used to search for configuration-containing subdirectories in the default repository"
+                        type: string
+                        default: ""
+                      cloneOnStart:
+                        description: "Whether the Config Server should clone the default repository when it starts up (by default, the Config Server will only clone the repository when configuration is first requested from the repository). Valid values are true and false"
+                        type: boolean 
+                        default: false
+                      username:
+                        description: "The username for accessing the default repo (if its protected by HTTP Basic Auth)"
+                        type: string 
+                      password:
+                        description: "The password for accessing the default repo (if its protected by HTTP Basic Auth)"
+                        type: string 
+                      refreshRate:
+                        description: "Interval, in seconds, to wait between refreshes of the Config Server’s repository clone when a client requests configuration"
+                        type: number
+                        minimum: 15
+                        maximum: 3600
+                      skipSslValidation:
+                        description: "For a https:// URI, whether to skip validation of the SSL certificate on the default repository’s server. Valid values are true and false"
+                        type: boolean
+  # Templates allow the end user to define anything they want to be created.
+  # The parameters if specified define where the source is, either requesst
+  # metadata or parameters.  Parameters allow defaults to be specified if
+  # the parameter is not defined.  Parameters are applied to the resource one
+  # or many times as required.
+  templates:
+# c2c Service and Network Policy Templates
+  - name: port-snippet
+    template:
+      name: '{{ .name }}'
+      port: '{{ .port }}'
+      targetPort: '{{ .targetport }}'
+      protocol: '{{upper .protocol}}'
+  - name: cfmr-c2c-svc
+    template:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: '{{ registry "destination-appname" }}'
+        namespace: '{{ registry "network-policy-c2c-namespace" }}'
+      spec:
+        selector:
+          cloudfoundry.org/app_guid: '{{ registry "destination-guid" }}'
+        ports: '{{ snippetArray "port-snippet" (parameter "/ports" | required) }}'
+  - name: cfmr-c2c-netpol
+    template:
+      kind: NetworkPolicy
+      apiVersion: networking.k8s.io/v1
+      metadata:
+        name: '{{ printf "%v-%v" (registry "instance-name") (registry "destination-appname") }}'
+        namespace: '{{ registry "network-policy-c2c-namespace" }}'
+      spec:
+        podSelector:
+          matchLabels:
+            cloudfoundry.org/app_guid: '{{ registry "destination-guid" }}'
+        ingress:
+        - from:
+          - namespaceSelector: {}
+            podSelector:
+              matchLabels:
+                cloudfoundry.org/app_guid: '{{ registry "source-guid" }}'
+# mySQL Service Templates
+  - name: cfmr-p-mysql-on-demand-single-instance-pvc
+    template:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+         name: '{{ registry "instance-name" }}'
+         namespace: '{{ registry "p-mysql-namespace" }}'
+      spec:
+         accessModes:
+           - ReadWriteOnce
+         resources:
+           requests:
+             storage: 1Gi
+  - name: cfmr-p-mysql-on-demand-single-instance-secret
+    template:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: '{{ registry "instance-name" }}'
+        namespace: '{{ registry "p-mysql-namespace" }}'
+      type: Opaque
+      stringData:
+        rootpassword: '{{ registry "mysql-rootpassword" }}'
+        dbname: '{{ registry "mysql-dbname" }}'
+        user: '{{ registry "mysql-username" }}'
+        userpassword: '{{ registry "mysql-userpassword" }}'
+  - name: cfmr-p-mysql-on-demand-single-instance-deploy
+    template:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: '{{ registry "instance-name" }}'
+        namespace: '{{ registry "p-mysql-namespace" }}'
+      spec:
+        selector:
+          matchLabels:
+            app: '{{ registry "instance-name" }}'
+        strategy:
+          rollingUpdate:
+            maxSurge: 1
+            maxUnavailable: 1
+          type: RollingUpdate
+        replicas: 1
+        template:
+          metadata:
+            labels:
+              app: '{{ registry "instance-name" }}'
+          spec:
+            schedulerName: default-scheduler
+            containers:
+            - name: mariadb
+              image: image-registry.openshift-image-registry.svc:5000/mysql-deploy/cfmr-p-mysql:1.0.0
+              imagePullPolicy: "Always"
+              env:
+              - name: MYSQL_ROOT_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: '{{ registry "instance-name" }}'
+                    key: rootpassword
+              - name: MYSQL_DATABASE
+                valueFrom:
+                  secretKeyRef:
+                    name:  '{{ registry "instance-name" }}' 
+                    key: dbname
+              - name: MYSQL_USER
+                valueFrom:
+                  secretKeyRef:
+                    name: '{{ registry "instance-name" }}'
+                    key: user
+              - name: MYSQL_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: '{{ registry "instance-name" }}'
+                    key: userpassword
+              ports:
+              - containerPort: 3306
+              volumeMounts:
+              - mountPath: /var/lib/mysql
+                name: mariadb-data
+            volumes:
+            - name: mariadb-data
+              persistentVolumeClaim:
+                claimName: '{{ registry "instance-name" }}'
+  - name: cfmr-p-mysql-on-demand-single-instance-svc
+    template:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: '{{ registry "instance-name" }}'
+        namespace: '{{ registry "p-mysql-namespace" }}'
+        labels:
+          app: '{{ registry "instance-name" }}'
+      spec:
+        type: ClusterIP
+        ports:
+          - port: 3306
+        selector:
+          app: '{{ registry "instance-name" }}'
+  - name: mysql-credentials
+    template:
+      hostname: '{{ printf "%v.mysql-deploy.svc.cluster.local" (registry "instance-name") }}'
+      jdbcUrl: '{{ printf "jdbc:mysql://%v.mysql-deploy.svc.cluster.local:3306/%v?user=%v\u0026password=%v" (registry "instance-name") (registry "mysql-dbname") (registry "mysql-username") (registry "mysql-userpassword") }}'
+      name: '{{ registry "mysql-dbname" }}'
+      password: '{{ registry "mysql-userpassword" }}'
+      port: 3306
+      uri: '{{ printf "mysql://%v:%v@%v.mysql-deploy.svc.cluster.local:3306/%v?reconnect=true" (registry "mysql-username") (registry "mysql-userpassword") (registry "instance-name") (registry "mysql-dbname") }}'
+      username: '{{ registry "mysql-username" }}'
+      rootpassword: '{{ registry "mysql-rootpassword" }}'
+  # Redis Service Templates
+  - name: cfmr-p-redis-on-demand-single-instance-cm
+    template:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+       name: '{{ registry "instance-name" }}'
+       namespace: '{{ registry "p-redis-namespace" }}'
+      data:
+        update-node.sh: |
+          #!/bin/sh
+          REDIS_NODES="/data/nodes.conf"
+          sed -i -e "/myself/ s/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/${POD_IP}/" ${REDIS_NODES}
+          exec "$@"
+        redis.conf: '{{ printf "
+          bind 0.0.0.0\n
+          protected-mode no\n
+          port 6379\n
+          tcp-backlog 511\n
+          timeout 0\n
+          tcp-keepalive 300\n
+          daemonize no\n
+          pidfile /var/run/redis_6379.pid\n
+          loglevel notice\n
+          logfile \"\"\n
+          databases 16\n
+          always-show-logo no\n
+          set-proc-title yes\n
+          proc-title-template \"{title} {listen-addr} {server-mode}\"\n
+          stop-writes-on-bgsave-error yes\n
+          rdbcompression yes\n
+          rdbchecksum yes\n
+          dbfilename dump.rdb\n
+          rdb-del-sync-files no\n
+          dir ./\n
+          replica-serve-stale-data yes\n
+          replica-read-only yes\n
+          repl-diskless-sync no\n
+          repl-diskless-sync-delay 5\n
+          repl-diskless-load disabled\n
+          repl-disable-tcp-nodelay no\n
+          replica-priority 100\n
+          acllog-max-len 128\n
+          requirepass %v\n
+          maxmemory 1449551462\n
+          maxmemory-policy %v\n
+          lazyfree-lazy-eviction no\n
+          lazyfree-lazy-expire no\n
+          lazyfree-lazy-server-del no\n
+          replica-lazy-flush no\n
+          lazyfree-lazy-user-del no\n
+          lazyfree-lazy-user-flush no\n
+          oom-score-adj no\n
+          oom-score-adj-values 0 200 800\n
+          disable-thp yes\n
+          appendonly yes\n
+          appendfilename appendonly.aof\n
+          appendfsync everysec\n
+          no-appendfsync-on-rewrite no\n
+          auto-aof-rewrite-percentage 100\n
+          auto-aof-rewrite-min-size 64mb\n
+          aof-load-truncated yes\n
+          aof-use-rdb-preamble yes\n
+          lua-time-limit 5000\n
+          slowlog-log-slower-than %v\n
+          slowlog-max-len %v\n
+          latency-monitor-threshold 0\n
+          notify-keyspace-events %v\n
+          hash-max-ziplist-entries 512\n
+          hash-max-ziplist-value 64\n
+          list-max-ziplist-size -2\n
+          list-compress-depth 0\n
+          set-max-intset-entries 512\n
+          zset-max-ziplist-entries 128\n
+          zset-max-ziplist-value 64\n
+          hll-sparse-max-bytes 3000\n
+          stream-node-max-bytes 4096\n
+          stream-node-max-entries 100\n
+          activerehashing yes\n
+          client-output-buffer-limit normal 0 0 0\n
+          client-output-buffer-limit replica 256mb 64mb 60\n
+          client-output-buffer-limit pubsub 32mb 8mb 60\n
+          hz 10\n
+          dynamic-hz yes\n
+          aof-rewrite-incremental-fsync yes\n
+          rdb-save-incremental-fsync yes\n
+          jemalloc-bg-thread yes\n" (registry "redis-password") (parameter "/maxmemory-policy" | default "allkeys-lru") (parameter "/slowlog-log-slower-than" | default 10000) (parameter "/slowlog-max-len" | default 128) (parameter "/notify-keyspace-events" | default "\"\"") }}'
+  - name: cfmr-p-redis-on-demand-single-instance-ss
+    template:
+      apiVersion: apps/v1
+      kind: StatefulSet
+      metadata:
+        name: '{{ registry "instance-name" }}'
+        namespace: '{{ registry "p-redis-namespace" }}'
+      spec:
+       serviceName: '{{ registry "instance-name" }}'
+       replicas: 1
+       selector:
+         matchLabels:
+           app: '{{ registry "instance-name" }}'
+       template:
+         metadata:
+           labels:
+             app: '{{ registry "instance-name" }}'
+           annotations:
+             prometheus.io/scrape: "true"
+             prometheus.io/port: "9121"
+         spec:
+           initContainers:
+           - name: set-somaxconn
+             image: busybox
+             imagePullPolicy: IfNotPresent
+             command:
+             - sh
+             - -c
+             - "sysctl -w net.core.somaxconn=1024;" 
+             securityContext:
+               privileged: true
+           containers:
+           # deploy the redis_exporter as a sidecar to a Redis instance.
+           - name: redis-exporter
+             image: image-registry.openshift-image-registry.svc:5000/redis-deploy/cfmr-p-redis-exporter:1.0.0
+             ports:
+             - name: exporter
+               containerPort: 9121
+           - name: redis
+             image: image-registry.openshift-image-registry.svc:5000/redis-deploy/cfmr-p-redis:1.0.0
+             resources:
+               limits:
+                 memory: "1.5Gi"
+               requests:
+                 memory: "1.5Gi"
+             ports:
+             - name: client
+               containerPort: 6379
+             - name: gossip
+               containerPort: 16379
+             command: ["/conf/update-node.sh", "redis-server", "/conf/redis.conf"]
+             livenessProbe:
+              tcpSocket:
+                port: client # named port
+              initialDelaySeconds: 30
+              timeoutSeconds: 5
+              periodSeconds: 5
+              failureThreshold: 5
+              successThreshold: 1
+             readinessProbe:
+              exec:
+                command:
+                - redis-cli
+                - ping
+              initialDelaySeconds: 10
+              timeoutSeconds: 5
+              periodSeconds: 3
+             env:
+             - name: POD_IP
+               valueFrom:
+                 fieldRef:
+                   fieldPath: status.podIP
+             volumeMounts:
+             - name: conf
+               mountPath: /conf
+               readOnly: false
+             - name: redis-data
+               mountPath: /data
+               readOnly: false
+           volumes:
+           - name: conf
+             configMap:
+               name: '{{ registry "instance-name" }}'
+               defaultMode: 0755
+       volumeClaimTemplates:
+       - metadata:
+           name: redis-data
+         spec:
+           accessModes: [ "ReadWriteOnce" ]
+           resources:
+             requests:
+               storage: 3Gi
+  - name: cfmr-p-redis-on-demand-single-instance-svc
+    template:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: '{{ registry "instance-name" }}'
+        namespace: '{{ registry "p-redis-namespace" }}'
+      spec:
+        type: ClusterIP
+        ports:
+        - port: 6379
+          targetPort: 6379
+          name: client
+        - port: 16379
+          targetPort: 16379
+          name: gossip
+        selector:
+          app: '{{ registry "instance-name" }}'
+  - name: redis-credentials
+    template:
+      host: '{{ printf "%v.redis-deploy.svc.cluster.local" (registry "instance-name") }}'
+      password: '{{ registry "redis-password" }}'
+      port: 6379
+  # RabbitMQ Service Templates
+  - name: cfmr-p-rabbitmq-on-demand-single-instance
+    template:
+      apiVersion: rabbitmq.com/v1beta1
+      kind: RabbitmqCluster
+      metadata:
+        name: '{{ registry "instance-name" }}'
+        namespace: '{{ registry "p-rabbitmq-namespace" }}'
+      spec:
+        replicas: 1
+        persistence:
+          storage: 30Gi
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 8Gi
+          limits:
+            cpu: 2000m
+            memory: 8Gi
+        rabbitmq:
+          additionalPlugins:
+            - rabbitmq_federation
+            - rabbitmq_federation_management
+            - rabbitmq_shovel
+            - rabbitmq_shovel_management
+            - rabbitmq_peer_discovery_k8s
+            - rabbitmq_prometheus
+            - rabbitmq_management
+            - rabbitmq_management_agent
+            - rabbitmq_event_exchange
+            - rabbitmq_amqp1_0
+          additionalConfig: '{{ printf "\ndefault_user=%s\ndefault_pass=%s\ndefault_vhost=%s\ncluster_formation.peer_discovery_backend=rabbit_peer_discovery_k8s\ncluster_formation.k8s.host=kubernetes.default.svc.cluster.local\ncluster_formation.k8s.address_type=hostname\ncluster_formation.k8s.service_name=%s\ncluster_formation.k8s.hostname_suffix=.%s.%s.svc.cluster.local\ncluster_formation.node_cleanup.interval=60\ncluster_formation.node_cleanup.only_log_warning=true\ncluster_partition_handling=pause_minority\nqueue_master_locator=min-masters\nheartbeat=60" (registry "default-user") (registry "default-password") (registry "default-vhost") (registry "instance-name") (registry "instance-name") (registry "p-rabbitmq-namespace") }}'
+  - name: cfmr-p-rabbitmq-on-demand-ha-cluster
+    template:
+      apiVersion: rabbitmq.com/v1beta1
+      kind: RabbitmqCluster
+      metadata:
+        name: '{{ registry "instance-name" }}'
+        namespace: '{{ registry "p-rabbitmq-namespace" }}'
+      spec:
+        replicas: 3
+        persistence:
+          storage: 30Gi
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 8Gi
+          limits:
+            cpu: 2000m
+            memory: 8Gi
+        rabbitmq:
+          additionalPlugins:
+            - rabbitmq_federation
+            - rabbitmq_federation_management
+            - rabbitmq_shovel
+            - rabbitmq_shovel_management
+            - rabbitmq_sharding
+            - rabbitmq_consistent_hash_exchange
+            - rabbitmq_prometheus
+            - rabbitmq_management
+            - rabbitmq_event_exchange
+            - rabbitmq_amqp1_0
+          additionalConfig: '{{ printf "\ndefault_user=%s\ndefault_pass=%s\ndefault_vhost=%s\ncluster_formation.peer_discovery_backend=rabbit_peer_discovery_k8s\ncluster_formation.k8s.host=kubernetes.default.svc.cluster.local\ncluster_formation.k8s.address_type=hostname\ncluster_formation.k8s.service_name=%s\ncluster_formation.k8s.hostname_suffix=.%s.%s.svc.cluster.local\ncluster_formation.node_cleanup.interval=60\ncluster_formation.node_cleanup.only_log_warning=true\ncluster_partition_handling=pause_minority\nqueue_master_locator=min-masters\nheartbeat=60" (registry "default-user") (registry "default-password") (registry "default-vhost") (registry "instance-name") (registry "instance-name") (registry "p-rabbitmq-namespace") }}'
+  - name: rabbitmq-instance-dashboard-route
+    template:
+      apiVersion: route.openshift.io/v1
+      kind: Route
+      metadata:
+        name: '{{ printf "%v-dashboard" (registry "instance-name") }}'
+        namespace: '{{ registry "p-rabbitmq-namespace" }}'
+      spec:
+        host: '{{ printf "%v-dashboard.%v" (registry "instance-name") (registry "subdomain") }}'
+        port:
+          targetPort: management
+        to:
+          kind: Service
+          name: '{{ registry "instance-name" }}'
+          weight: 100
+        wildcardPolicy: None      
+  - name: rabbitmq-credentials
+    template:
+      dashboard_url: '{{ printf "http://%v" (registry "dashboard-domain") }}'
+      username: '{{ registry "default-user" }}'
+      password: '{{ registry "default-password" }}'
+      vhost: '{{ registry "default-vhost" }}'
+      ssl: false
+      hostname: '{{ registry "dashboard-domain" }}'
+      hostnames:
+      - '{{ registry "dashboard-domain" }}'
+      uri: '{{ printf "amqp://%v:%v@%v/%v" (registry "default-user") (registry "default-password") (registry "amqp-url") (registry "default-vhost") }}'
+      uris:
+      - '{{ printf "amqp://%v:%v@%v/%v" (registry "default-user") (registry "default-password") (registry "amqp-url") (registry "default-vhost") }}'
+      http_api_uri: '{{ printf "http://%v:%v@%v/api" (registry "default-user") (registry "default-password") (registry "dashboard-domain") }}'
+      http_api_uris:
+      - '{{ printf "http://%v:%v@%v/api" (registry "default-user") (registry "default-password") (registry "dashboard-domain") }}'
+      protocols:
+        amqp:
+          username: '{{ registry "default-user" }}'
+          password: '{{ registry "default-password" }}'
+          vhost: '{{ registry "default-vhost" }}'
+          port: 5672
+          ssl: false
+          host: '{{ registry "amqp-url" }}'
+          hosts:
+          - '{{ registry "amqp-url" }}'
+          uri: '{{ printf "amqp://%v:%v@%v/%v" (registry "default-user") (registry "default-password") (registry "amqp-url") (registry "default-vhost") }}'
+          uris:
+          - '{{ printf "amqp://%v:%v@%v/%v" (registry "default-user") (registry "default-password") (registry "amqp-url") (registry "default-vhost") }}'
+        management:
+          username: '{{ registry "default-user" }}'
+          password: '{{ registry "default-password" }}'
+          path: '/api'
+          port: 80
+          ssl: false  
+          host: '{{ registry "dashboard-domain" }}'
+          hosts:
+          - '{{ registry "dashboard-domain" }}'
+          uri: '{{ printf "http://%v:%v@%v/api" (registry "default-user") (registry "default-password") (registry "dashboard-domain") }}'
+          uris:
+          - '{{ printf "http://%v:%v@%v/api" (registry "default-user") (registry "default-password") (registry "dashboard-domain") }}'
+# Eureka Service Templates
+  - name: cfmr-p-registry-svc
+    template:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: '{{ printf "p-service-registry-%v" (registry "instance-name") }}'
+        namespace: '{{ registry "p-service-registry-namespace" }}'
+        labels:
+          app: '{{ printf "p-service-registry-%v" (registry "instance-name") }}'
+      spec:
+        ports:
+        - port: 8761
+          name: eureka
+        clusterIP: None
+        selector:
+          app: '{{ printf "p-service-registry-%v" (registry "instance-name") }}'
+  - name: cfmr-p-registry-statefulset 
+    template:
+      apiVersion: apps/v1
+      kind: StatefulSet
+      metadata:
+        name: '{{ printf "p-service-registry-%v" (registry "instance-name") }}'
+        namespace: '{{ registry "p-service-registry-namespace" }}'
+      spec:
+        serviceName: '{{ printf "p-service-registry-%v" (registry "instance-name") }}'
+        replicas: 3 
+        selector:
+          matchLabels:
+            app: '{{ printf "p-service-registry-%v" (registry "instance-name") }}'
+        template:
+          metadata:
+            labels:
+              app: '{{ printf "p-service-registry-%v" (registry "instance-name") }}'
+          spec:
+            containers:
+            - name: eureka
+              image: image-registry.openshift-image-registry.svc:5000/spring-services-deploy/cfmr-p-registry:1.0.0
+              ports:
+              - containerPort: 8761
+              env:
+              - name: MY_POD_NAME
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.name
+                # Due to camelcase issues with "defaultZone" and "preferIpAddress", _JAVA_OPTIONS is used here
+              - name: _JAVA_OPTIONS
+                value: '{{ printf "-Deureka.instance.preferIpAddress=false -Deureka.environment=openshift -Deureka.client.serviceUrl.defaultZone=http://p-service-registry-%v-0.p-service-registry-%v.%v.svc.cluster.local:8761/eureka/,http://p-service-registry-%v-1.p-service-registry-%v.%v.svc.cluster.local:8761/eureka/,http://p-service-registry-%v-2.p-service-registry-%v.%v.svc.cluster.local:8761/eureka/ -Dspring.application.name=p-service-registry-%v-cluster" (registry "instance-name") (registry "instance-name") (registry "p-service-registry-namespace") (registry "instance-name") (registry "instance-name") (registry "p-service-registry-namespace") (registry "instance-name") (registry "instance-name") (registry "p-service-registry-namespace") (registry "instance-name") }}'
+              - name: EUREKA_CLIENT_REGISTERWITHEUREKA
+                value: "true"
+              - name: EUREKA_CLIENT_FETCHREGISTRY
+                value: "true"
+              # The hostnames must match with the the eureka serviceUrls, otherwise the replicas are reported as unavailable in the eureka dashboard      
+              - name: EUREKA_INSTANCE_HOSTNAME
+                value: '{{ printf "${MY_POD_NAME}.p-service-registry-%v.%v.svc.cluster.local" (registry "instance-name") (registry "p-service-registry-namespace") }}'
+        # No need to start the pods in order. We just need the stable network identity
+      podManagementPolicy: "Parallel"
+  - name: cfmr-p-registry-route
+    template:
+      apiVersion: route.openshift.io/v1
+      kind: Route
+      metadata:
+        annotations:
+          haproxy.router.openshift.io/disable_cookies: "true"
+          haproxy.router.openshift.io/balance: "roundrobin"
+        labels:
+          app: '{{ printf "p-service-registry-%v" (registry "instance-name") }}' 
+        name: '{{ printf "p-service-registry-%v" (registry "instance-name") }}'
+        namespace: '{{ printf "%v" (registry "p-service-registry-namespace") }}'
+      spec:
+        host: '{{ printf "cfmr-p-registry-%v.%v" (registry "instance-name") (registry "subdomain") }}'
+        port:
+          targetPort: eureka
+        to:
+          kind: Service
+          name: '{{ printf "p-service-registry-%v" (registry "instance-name") }}'
+          weight: 100
+        wildcardPolicy: None
+  - name: cfmr-p-registry-credentials
+    template:
+      access_token_uri: '{{ printf "https://p-spring-cloud-services.uaa.%v/oauth/token" (registry "customdomain") }}'
+      client_id: '{{ printf "p-spring-cloud-services-worker" }}'
+      client_secret: '{{ printf "DWiPkHI83ZVg" }}'
+      uri: '{{ printf "http://cfmr-p-registry-%v.%v" (registry "instance-name") (registry "subdomain") }}'
+# Spring Config-Server Service Templates
+  - name: cfmr-p-config-server-svc
+    template:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+        namespace: '{{ registry "p-config-server-namespace" }}'
+        labels:
+          app: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+      spec:
+        ports:
+        - port: 8888
+        selector:
+          app: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+        type: ClusterIP
+  - name: cfmr-p-config-server-route
+    template:
+      apiVersion: route.openshift.io/v1
+      kind: Route
+      metadata:
+        labels:
+          app: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+        name: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+        namespace: '{{ registry "p-config-server-namespace" }}'
+      spec:
+        host: '{{ printf "cfmr-p-config-server-%v.%v" (registry "instance-name") (registry "subdomain") }}'
+        port:
+          targetPort: 8888
+        to:
+          kind: Service
+          name: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+          weight: 100
+        wildcardPolicy: None
+  - name: cfmr-p-config-server-cm
+    template:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+        namespace: '{{ registry "p-config-server-namespace" }}'
+        labels:
+          app: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+      data:
+        application.properties: '{{ printf "\nspring.cloud.config.server.git.uri=%v" (parameter "/git/uri" | default "https://github.com/spring-cloud-samples/config-repo.git") }}'
+  - name: cfmr-p-config-server-secret
+    template:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+        namespace: '{{ registry "p-config-server-namespace" }}'
+      data:
+        config-server-user: dXNlcm5hbWU=
+        config-server-password: cGFzc3dvcmQ=
+  - name: cfmr-p-config-server-deploy
+    template:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+        namespace: '{{ registry "p-config-server-namespace" }}'
+        labels:
+          app: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+      spec:
+        replicas: 2
+        revisionHistoryLimit: 1
+        strategy:
+          rollingUpdate:
+            maxSurge: 3
+            maxUnavailable: 1
+          type: RollingUpdate
+        selector:
+          matchLabels:
+            app: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+        template:
+          metadata:
+            name: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+            labels:
+              app: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+          spec:
+            containers:
+            - image: image-registry.openshift-image-registry.svc:5000/spring-services-deploy/cfmr-p-config-server:1.0.0
+              imagePullPolicy: Always
+              lifecycle:
+                postStart:
+                  exec:
+                    command: '{{ list "/bin/sh" "-c" (registry "create-client") }}'
+                preStop:
+                  exec:
+                    command: '{{ list "/bin/sh" "-c" (registry "remove-client") }}'
+              name: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+              env:
+              - name: UAA_SCS_WORKER_CLIENTID
+                valueFrom:
+                  secretKeyRef:
+                    name: spring-cloud-services-uaa-zone-secret
+                    key: clientid
+              - name: UAA_SCS_WORKER_CLIENTSECRET
+                valueFrom:
+                  secretKeyRef:
+                    name: spring-cloud-services-uaa-zone-secret
+                    key: clientsecret
+              - name: SECURITY_USER_NAME
+                valueFrom:
+                  secretKeyRef:
+                    name: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+                    key: config-server-user
+              - name: SECURITY_USER_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+                    key: config-server-password
+              ports:
+              - containerPort: 8888
+                name: config-server
+              volumeMounts:
+              - name: application-config
+                mountPath: "/config"
+                readOnly: true
+              resources:
+                limits:
+                  memory: "512Mi"
+                requests:
+                  memory: "512Mi"
+              readinessProbe:
+                httpGet:
+                  path: /actuator/health
+                  port: 8888
+                initialDelaySeconds: 15
+                timeoutSeconds: 15
+                periodSeconds: 10
+                failureThreshold: 3
+              livenessProbe:
+                httpGet:
+                  path: /actuator/health
+                  port: 8888
+                initialDelaySeconds: 60
+                timeoutSeconds: 15
+                periodSeconds: 30
+                failureThreshold: 3
+            volumes:
+            - name: application-config
+              configMap:
+                name: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+                items:
+                - key: application.properties
+                  path: application.properties
+  - name: cfmr-p-config-server-credentials
+    template:
+      access_token_uri: '{{ printf "https://p-spring-cloud-services.uaa.%v/oauth/token" (registry "customdomain") }}'
+      client_id: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+      client_secret: '{{ printf "%v" (registry "client-secret") }}'
+      uri: '{{ printf "http://cfmr-p-config-server-%v.%v" (registry "instance-name") (registry "subdomain") }}'
+  # Bindings bind templates to service plans.  These allow the specification of
+  # exactly what templates are created when a plan is instantiated or bound to.
+  bindings:
+  - name: network-policy-c2c
+    service: network-policy
+    plan: c2c
+    registryScope: "Explicit"
+    registryNamespace: "cfmr-eirini"
+    serviceInstance:
+      registry:
+      - name: instance-name
+        value: '{{ printf "c2c-%s" (generatePassword 8 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: source-guid
+        value: '{{ parameter "/source-guid" }}'
+      - name: destination-appname
+        value: '{{ parameter "/destination-appname" }}'
+      - name: destination-guid
+        value: '{{ parameter "/destination-guid" }}'
+      - name: ports
+        value: '{{ parameter "/ports" }}'
+      - name: network-policy-c2c-namespace
+        value: 'cfmr-eirini'
+      steps:
+      - name: cfmr-c2c-policy-maker
+        templates:
+        - cfmr-c2c-svc
+        - cfmr-c2c-netpol
+        readinessChecks:
+        - name: cfmr-broker-always-on
+          timeout: 5m
+          condition:
+            apiVersion: apps/v1
+            kind: Deployment 
+            namespace: cfmr-broker
+            name: cfmr-service-broker
+            type: Available
+            status: "True"
+    serviceBinding:
+      registry:
+      - name: credentials
+        value: '{{ printf "{\"foo\":\"bar\"}" }}'
+  - name: p-mysql-db-small
+    service: p.mysql
+    plan: db-small
+    registryScope: "Explicit"
+    registryNamespace: "mysql-deploy"
+    serviceInstance:
+      registry:
+      - name: instance-name
+        value: '{{ printf "p-mysql-%s" (generatePassword 8 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: mysql-rootpassword
+        value:  '{{ parameter "/rootpassword" | default (generatePassword 14 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: mysql-userpassword
+        value:  '{{ parameter "/userpassword" | default (generatePassword 14 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: mysql-username
+        value:  '{{ parameter "/username" | default (generatePassword 32 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: mysql-dbname
+        value:  '{{ parameter "/dbname" | default (generatePassword 14 "abcdefghijklmnopqrstuvwxyz0123456789") }}' 
+      - name: subdomain
+        value: 'REPLACE_ME'
+      - name: p-mysql-namespace
+        value: 'mysql-deploy'
+      steps:
+      - name: cfmr-p-mysql-on-demand-single-instance
+        templates:
+        - cfmr-p-mysql-on-demand-single-instance-pvc
+        - cfmr-p-mysql-on-demand-single-instance-secret
+        - cfmr-p-mysql-on-demand-single-instance-deploy
+        - cfmr-p-mysql-on-demand-single-instance-svc
+        readinessChecks:
+        - name: cfmr-p-mysql-instance-available-0
+          timeout: 5m
+          condition:
+            apiVersion: apps/v1
+            kind: Deployment 
+            namespace: mysql-deploy
+            name: '{{ printf "%v" (registry "instance-name") }}'
+            type: Available
+            status: "True"
+    serviceBinding:
+      registry:
+      - name: credentials
+        value: '{{ snippet "mysql-credentials" }}'
+  - name: p-redis-small-cache
+    service: p-redis
+    plan: small-cache
+    registryScope: "Explicit"
+    registryNamespace: "redis-deploy"
+    serviceInstance:
+      registry:
+      - name: instance-name
+        value: '{{ printf "p-redis-%s" (generatePassword 8 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: redis-user
+        value: '{{ printf "%s" (generatePassword 14 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: redis-password
+        value:  '{{ printf "%s" (generatePassword 14 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: subdomain
+        value: 'REPLACE_ME'
+      - name: p-redis-namespace
+        value: 'redis-deploy'
+      steps:
+      - name: cfmr-p-redis-on-demand-single-instance
+        templates:
+        - cfmr-p-redis-on-demand-single-instance-cm
+        - cfmr-p-redis-on-demand-single-instance-ss
+        - cfmr-p-redis-on-demand-single-instance-svc
+        readinessChecks:
+        - name: cfmr-p-redis-instance-available-0
+          timeout: 5m
+          condition:
+            apiVersion: v1
+            kind: Pod
+            namespace: redis-deploy
+            name: '{{ printf "%v-0" (registry "instance-name") }}'
+            type: ContainersReady
+            status: "True"
+    serviceBinding:
+      registry:
+      - name: credentials
+        value: '{{ snippet "redis-credentials" }}'
+  - name: p-rabbitmq-standard
+    service: p-rabbitmq
+    plan: standard
+    registryScope: "Explicit"
+    registryNamespace: "rabbitmq-deploy"
+    serviceInstance:
+      registry:
+      - name: instance-name
+        value: '{{ printf "p-rabbitmq-%s" (generatePassword 8 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: default-user
+        value: '{{ printf "%s" (generatePassword 14 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: default-password
+        value:  '{{ printf "%s" (generatePassword 14 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: default-vhost
+        value:  '{{ printf "%s" (generatePassword 14 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: subdomain
+        value: 'REPLACE_ME'
+      - name: p-rabbitmq-namespace
+        value: 'rabbitmq-deploy'
+      - name: dashboard-url
+        value: '{{ printf "http://%v-dashboard.%v" (registry "instance-name") (registry "subdomain") }}'
+      - name: dashboard-domain
+        value: '{{ printf "%v-dashboard.%v" (registry "instance-name") (registry "subdomain") }}' 
+      - name: amqp-url
+        value: '{{ printf "%v.%v.svc.cluster.local:5672" (registry "instance-name") (registry "p-rabbitmq-namespace") }}'
+      steps:
+      - name: cfmr-p-rabbitmq-on-demand-ha
+        templates:
+        - cfmr-p-rabbitmq-on-demand-ha-cluster
+        - rabbitmq-instance-dashboard-route
+        readinessChecks:
+        - name: cfmr-p-rabbitmq-cluster-available-0
+          timeout: 5m
+          condition:
+            apiVersion: rabbitmq.com/v1beta1
+            kind: RabbitmqCluster
+            namespace: rabbitmq-deploy
+            name: '{{ printf "%v" (registry "instance-name") }}'
+            type: AllReplicasReady
+            status: "True"
+    serviceBinding:
+      registry:
+      - name: client-secret
+        value: '{{ generatePassword 8 nil }}'
+      - name: credentials
+        value: '{{ snippet "rabbitmq-credentials" }}'
+  - name: p-rabbitmq-single
+    service: p-rabbitmq
+    plan: single
+    registryScope: "Explicit"
+    registryNamespace: "rabbitmq-deploy"
+    serviceInstance:
+      registry:
+      - name: instance-name
+        value: '{{ printf "p-rabbitmq-%s" (generatePassword 8 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: default-user
+        value: '{{ printf "%s" (generatePassword 14 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: default-password
+        value:  '{{ printf "%s" (generatePassword 14 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: default-vhost
+        value:  '{{ printf "%s" (generatePassword 14 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: subdomain
+        value: 'REPLACE_ME'
+      - name: p-rabbitmq-namespace
+        value: 'rabbitmq-deploy'
+      - name: dashboard-url
+        value: '{{ printf "http://%v-dashboard.%v" (registry "instance-name") (registry "subdomain") }}'
+      - name: dashboard-domain
+        value: '{{ printf "%v-dashboard.%v" (registry "instance-name") (registry "subdomain") }}'
+      - name: amqp-url
+        value: '{{ printf "%v.%v.svc.cluster.local:5672" (registry "instance-name") (registry "p-rabbitmq-namespace") }}'
+      steps:
+      - name: cfmr-p-rabbitmq-on-demand-single-instance
+        templates:
+        - cfmr-p-rabbitmq-on-demand-single-instance
+        - rabbitmq-instance-dashboard-route
+        readinessChecks:
+        - name: cfmr-p-rabbitmq-cluster-available-0
+          timeout: 5m
+          condition:
+            apiVersion: rabbitmq.com/v1beta1
+            kind: RabbitmqCluster
+            namespace: rabbitmq-deploy
+            name: '{{ printf "%v" (registry "instance-name") }}'
+            type: AllReplicasReady
+            status: "True"
+    serviceBinding:
+      registry:
+      - name: client-secret
+        value: '{{ generatePassword 8 nil }}'
+      - name: credentials
+        value: '{{ snippet "rabbitmq-credentials" }}'
+  - name: p-service-registry
+    service: p-service-registry
+    plan: standard
+    registryScope: "Explicit"
+    registryNamespace: "spring-services-deploy"
+    serviceInstance:
+      registry:
+      - name: instance-name
+        value: '{{ printf "%s" (generatePassword 8 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: subdomain
+        value: 'REPLACE_ME'
+      - name: customdomain
+        value: 'REPLACE_CUSTOM'
+      - name: p-service-registry-namespace
+        value: 'spring-services-deploy'
+      - name: dashboard-url
+        value: '{{ printf "http://cfmr-p-registry-%v.%v" (registry "instance-name") (registry "subdomain") }}'
+      steps:
+      - name: cfmr-p-registry
+        templates:
+        - cfmr-p-registry-svc
+        - cfmr-p-registry-statefulset
+        - cfmr-p-registry-route
+        readinessChecks:
+        - name: cfmr-p-registry-cluster-available-0
+          timeout: 5m
+          condition:
+            apiVersion: v1
+            kind: Pod
+            namespace: '{{ registry "p-service-registry-namespace" }}'
+            name: '{{ printf "p-service-registry-%v-0" (registry "instance-name") }}'
+            type: Ready
+            status: "True"
+        - name: cfmr-p-registry-cluster-available-1
+          condition:
+            apiVersion: v1
+            kind: Pod
+            namespace: '{{ registry "p-service-registry-namespace" }}'
+            name: '{{ printf "p-service-registry-%v-1" (registry "instance-name") }}'
+            type: Ready
+            status: "True"
+        - name: cfmr-p-registry-cluster-available-2
+          condition:
+            apiVersion: v1
+            kind: Pod
+            namespace: '{{ registry "p-service-registry-namespace" }}'
+            name: '{{ printf "p-service-registry-%v-2" (registry "instance-name") }}'
+            type: Ready
+            status: "True"
+    serviceBinding:
+      registry:
+      - name: client-secret
+        value: '{{ generatePassword 8 nil }}'
+      - name: credentials
+        value: '{{ snippet "cfmr-p-registry-credentials" }}'
+  - name: p-config-server
+    service: p.config-server
+    plan: standard
+    registryScope: "Explicit"
+    registryNamespace: "spring-services-deploy"
+    serviceInstance:
+      registry:
+      - name: instance-name
+        value: '{{ printf "%s" (generatePassword 8 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
+      - name: subdomain
+        value: 'REPLACE_ME'
+      - name: customdomain
+        value: 'REPLACE_CUSTOM'
+      - name: p-config-server-namespace
+        value: 'spring-services-deploy'
+      - name: client-secret
+        value: '{{ generatePassword 8 nil }}'
+      - name: create-client
+        value: '{{ printf "/opt/spring-cloud-config-server/create-client.sh %v %v %v %v %v" (registry "customdomain") (registry "instance-name") (registry "instance-name") (registry "instance-name") (registry "client-secret") }}'
+      - name: create-client-arg-1
+        value: '{{ (registry "customdomain") }}'
+      - name: create-client-arg-2
+        value: '{{ (registry "instance-name") }}'
+      - name: create-client-arg-3
+        value: '{{ (registry "instance-name") }}'
+      - name: create-client-arg-4
+        value: '{{ (registry "instance-name") }}'
+      - name: create-client-arg-5
+        value: '{{ (registry "client-secret") }}'
+      - name: remove-client
+        value: '{{ printf "/opt/spring-cloud-config-server/remove-client.sh %v %v" (registry "customdomain") (registry "instance-name") }}'
+      - name: remove-client-arg-1
+        value: '{{ (registry "customdomain") }}'
+      - name: remove-client-arg-2
+        value: '{{ (registry "instance-name") }}'
+      steps:
+      - name: cfmr-p-config-server
+        templates:
+        - cfmr-p-config-server-secret
+        - cfmr-p-config-server-svc
+        - cfmr-p-config-server-cm
+        - cfmr-p-config-server-deploy
+        - cfmr-p-config-server-route
+        readinessChecks:
+        - name: cfmr-p-config-server-cluster-available
+          timeout: 5m
+          condition:
+            apiVersion: apps/v1
+            kind: Deployment
+            namespace: '{{ registry "p-config-server-namespace" }}'
+            name: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
+            type: Available
+            status: "True"
+    serviceBinding:
+      registry:
+      - name: credentials
+        value: '{{ snippet "cfmr-p-config-server-credentials" }}'

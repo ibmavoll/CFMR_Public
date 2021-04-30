@@ -1,0 +1,16 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations:
+  name: cfmr-service-broker
+  namespace: cfmr-broker
+spec:
+  host: cfmr-service-broker-default.REPLACE_ME
+  tls:
+    termination: passthrough
+  to:
+    kind: Service
+    name: cfmr-service-broker
+    weight: 100
+  wildcardPolicy: None
+status: {}
