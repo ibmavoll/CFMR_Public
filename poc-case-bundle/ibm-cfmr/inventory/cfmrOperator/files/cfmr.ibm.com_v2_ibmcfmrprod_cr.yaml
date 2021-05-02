@@ -10,7 +10,7 @@
 apiVersion: cfmr.ibm.com/v2
 kind: IbmCfmrProd
 metadata:
-  name: smoketest-aws
+  name: airgap-four-seven
   namespace: cfmr-operator
   labels:
     release: cfmr-operator
@@ -90,11 +90,11 @@ spec:
     stack: cflinuxfs3
     storageClass: ""
     stratosVersion: 4.4.0
-    customDomain: "your.custom.domain.here"
+    customDomain: "airgap.cfmr.site"
     customCertNamespace: openshift-ingress
     customCertSecret: cfmr-custom-domain-tls
-    chartRepository: ""
-    chartRepositoryName: ""
+    chartRepository: "http://private-helm-repo-chartmuseum-private-helm-repo.four-seven-luck-2025abf5e73a457f12bb6f6fae6f9c13-0000.tor01.containers.appdomain.cloud"
+    chartRepositoryName: "private-helm-repo"
     persiBrokerRWXstorageClass: ""
     persiBrokerRWOstorageClass: ""
   global:

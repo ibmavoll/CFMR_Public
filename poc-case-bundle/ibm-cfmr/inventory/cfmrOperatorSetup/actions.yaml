@@ -362,7 +362,7 @@ actions:
                 - "/case/prereqs/k8sResources/workerIntelLinux"
                 - "/case/prereqs/k8sDistros/openshift"
                 - "/case/prereqs/client/helm"
-                - "/case/prereqs/client/helm push"
+                - "/case/prereqs/client/helm_push"
             k8sPermissions:
                 rules: []
 

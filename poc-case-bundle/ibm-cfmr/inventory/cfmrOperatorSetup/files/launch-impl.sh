@@ -11,7 +11,7 @@ channelName="stable"
 registry="${TARGET_REGISTRY:-ibmcloud}"
 # - variables specific to catalog/operator installation
 catalogNamespace="openshift-marketplace"
-catalogDigest="@sha256:115a2dac05abf47f2b310921f9ae28eddd497fda79799377355fcbf2d5be5b48"
+catalogDigest="@sha256:acfee766ea9b3c7b1a69046d483fbe5f44ba9f87cecba83461971582f236a3cc"
 
 # ----- INSTALL ACTIONS -----
 

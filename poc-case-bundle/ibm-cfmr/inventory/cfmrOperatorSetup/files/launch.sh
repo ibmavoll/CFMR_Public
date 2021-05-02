@@ -53,7 +53,7 @@ chart_dir=""
 chartmuseum=""
 chartmuseumImage=""
 chartmuseumImageTag=""
-url=""
+helm_url=""
 helm_pass=""
 helm_user=""
 
@@ -182,7 +182,7 @@ OPTIONS:
       --engine                 : container engine to run the container (docker or podman)
 
     init-helm-repository       : initialize a local helm chart repository
-      --username               : login user name for helm chart repository
+      --helmusername           : login user name for helm chart repository
       --password               : login password for helm chart repository
       --dir                    : local directory for helm charts (default: /tmp/cases/charts)
       --chartmuseum            : chartmuseum helm chart name
@@ -190,7 +190,7 @@ OPTIONS:
       --chartmuseumImageTag    : chartmuseum image tag (default: v0.13.1)
 
     load-helm-repository       : load local helm chart repository with bundled charts
-      --username               : login user name for helm chart repository
+      --helmusername           : login user name for helm chart repository
       --password               : login password for helm chart repository
       --dir                    : local directory for helm charts (default: /tmp/cases/charts)
 
@@ -351,6 +351,42 @@ parse_dynamic_args() {
             ;;
         --recursive)
             recursive_action=1
+            ;;
+        # flags related to helm
+        --helmusername)
+            idx=$((idx + 1))
+            v="${arr[${idx}]}"
+            helm_user="${v}"
+            ;;
+        --helmpassword)
+            idx=$((idx + 1))
+            v="${arr[${idx}]}"
+            helm_pass="${v}"
+            ;;
+        --helmurl)
+            idx=$((idx + 1))
+            v="${arr[${idx}]}"
+            helm_url="${v}"
+            ;;
+        --chartmuseum)
+            idx=$((idx + 1))
+            v="${arr[${idx}]}"
+            chartmuseum="${v}"
+            ;;
+        --chart_dir)
+            idx=$((idx + 1))
+            v="${arr[${idx}]}"
+            chart_dir="${v}"
+            ;;
+        --chartmuseumImage)
+            idx=$((idx + 1))
+            v="${arr[${idx}]}"
+            chartmuseumImage="${v}"
+            ;;
+        --chartmuseumImageTag)
+            idx=$((idx + 1))
+            v="${arr[${idx}]}"
+            chartmuseumImageTag="${v}"
             ;;
         # flags related to starting/stopping local docker registry
         --subject)
@@ -625,7 +661,7 @@ init_helm_repository() {
 load_helm_repository() {
     echo "-------------Load helm repository-------------"
     "${scriptDir}"/airgap.sh helm repository load\
-        ${url:+'--url' "$url"} \
+        ${helm_url:+'--url' "$helm_url"} \
         ${helm_user:+'--username' "$helm_user"} \
         ${helm_pass:+'--password' "$helm_pass"} \
         ${chart_dir:+'--dir' "$chart_dir"}

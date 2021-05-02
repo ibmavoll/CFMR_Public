@@ -34,7 +34,6 @@ prereqs:
           description: "Kubernetes version is 1.16.0 or greater"
         distribution: kubernetes
         semver: ">=1.16.0"
-    helm: {}
 
     client:
       kubectl:
@@ -55,3 +54,15 @@ prereqs:
         command: "cloudctl"
         versionArgs: "version"
         versionRegex: "Client Version: v3.[5-9]*.*"
+      helm:
+        metadata:
+          description: "Client has helm version v3.x.x"
+        command: "helm"
+        versionArgs: "version"
+        versionRegex: "Version:\"v3.[0-9]*.[^,]*"
+      helm_push:
+        metadata:
+          description: "Client has helm push plugin installed"
+        command: "helm"
+        versionArgs: "push --check-helm-version"
+        versionRegex: "[3]"
