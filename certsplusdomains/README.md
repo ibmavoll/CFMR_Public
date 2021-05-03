@@ -1,4 +1,4 @@
-## CFMR Control Plane SSL Cert Swap
+## CFMR Control Plain SSL Cert Swap
 
 ### Step 1 - Extract the ca.crt from CFMR's secret
 ```
