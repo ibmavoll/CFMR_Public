@@ -60,6 +60,7 @@ metadata:
   resourceVersion: ""
   selfLink: ""
 ```
+
 ### Step 4:  Let's create a "defaultCertificate" to be used with this new ingresscontroller.  
 
 We could have just predefined it in the YAML ... but I wanted to make this a separate step to clarify how we provide SSL Certs to associate with this controller.  In my case, I use LetsEncrypt and have the key and fullchain.cer .  I made sure that my SSL Cert was a wildcard certificate and also that I covered the "IdentityZone" subdomains under `uaa` as well.  This was my command using acme.sh. ` acme.sh --issue --dns dns_namecheap -d 'prelaunch.cfmr.site' -d '*.prelaunch.cfmr.site' -d '*.uaa.prelaunch.cfmr.site'`
@@ -87,7 +88,15 @@ oc label ns cfmr type=sharded --overwrite=true
 
 oc create route reencrypt router -n cfmr --hostname router.prelaunch.cfmr.site --insecure-policy Redirect --service router --port router-ssl --dest-ca-cert ./custom_ca.crt --wildcard-policy="Subdomain"
 
+# UAA Identity Zone Route
+oc create route reencrypt identity-zone -n cfmr --hostname router.uaa.prelaunch.cfmr.site --insecure-policy Redirect --service router --port router-ssl --dest-ca-cert ./custom_ca.crt --wildcard-policy="Subdomain"
+
 oc create route passthrough cfmr-ui -n cfmr-ui --hostname cfmr-ui.prelaunch.cfmr.site --insecure-policy Redirect --service cfmr-ui-ui-ext --port https
+
+# Delete and Recreate SSL Cert Secret
+oc delete secret cfmr-ui-cert -n cfmr-ui
+
+oc create secret tls cfmr-ui-cert --cert /path/to/fullchain.cer --key /path/to/private.key -n cfmr-ui
 ```
 
 ### Step 7:  Verify the routes are ONLY exposed via our new ingresscontroller

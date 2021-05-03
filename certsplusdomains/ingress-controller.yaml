@@ -1,0 +1,28 @@
+apiVersion: v1
+items:
+- apiVersion: operator.openshift.io/v1
+  kind: IngressController
+  metadata:
+    name: cfmr-shard
+    namespace: openshift-ingress-operator
+  spec:
+    domain: router.REPLACE_CUSTOM
+    endpointPublishingStrategy:
+      loadBalancer:
+        scope: External
+      type: LoadBalancerService
+    nodePlacement:
+      tolerations:
+      - key: dedicated
+        value: edge
+    namespaceSelector:
+      matchLabels:
+        type: sharded
+    routeAdmission:
+      namespaceOwnership: InterNamespaceAllowed
+      wildcardPolicy: WildcardsAllowed
+  status: {}
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
