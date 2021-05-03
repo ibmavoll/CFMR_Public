@@ -134,8 +134,7 @@ oc apply -f servicebroker.couchbase.com_servicebrokerconfigs.yaml
 # Install the Config Yaml found in the repo under <repo>/ibm/doppelganger/broker-config.yaml
 
 # This approach allows you to substitute the domain name for the environment within the config file dynamically
-cat broker-config.yaml | sed 's/REPLACE_ME/'$(oc get configmap console-config -n openshift-console -o jsonpath='{.data.console-config\.yaml}' | grep consoleBaseAddress | awk '{print $2}' | cut -d"." -f2- | cut -d":" -f1)'/g' | oc apply -f -
-
+cat broker-config.yaml | sed 's/REPLACE_ME/'$(oc get configmap console-config -n openshift-console -o jsonpath='{.data.console-config\.yaml}' | grep consoleBaseAddress | awk '{print $2}' | cut -d"." -f2- | cut -d":" -f1)'/g' | sed 's/REPLACE_CUSTOM/your.custom.site/g' | oc apply -f -
 # TODO:  CHANGE DEFAULT BROKER USERNAME:PASSWORD found within Secret YAML definition of broker.
 # TODO:  Defaults:     username: username        password:  password
 
@@ -218,7 +217,7 @@ cf create-service p.mysql db-small mysql-test
 cf create-service p-rabbitmq single rabbitmq-sing-test
 cf create-service p-rabbitmq standard rabbitmq-std-test
 cf create-service p-service-registry standard registry-test
-cf create-service p.config-server standard config-server-test
+cf create-service p.config-server standard config-server-test -c '{ "git": { "uri": "https://github.com/spring-cloud-services-samples/cook-config.git", "label": "master"  } }'
 
 # TODO:  Need to figure out consistent naming scheme for using dots vs hyphens
 
@@ -226,6 +225,8 @@ cf create-service p.config-server standard config-server-test
 cf services
 
 # Let's snoop from the openshift side to make sure the broker is doing its job
+watch -n 15 "oc get pods,secrets -n redis-deploy && oc get pods -n mysql-deploy && oc get pods -n rabbitmq-deploy && oc get pods -n spring-services-deploy && oc get pods -n cfmr-broker"
+
 oc get pods -n redis-deploy
 oc get pods -n mysql-deploy
 oc get pods -n rabbitmq-deploy
