@@ -13,8 +13,8 @@ oc get secret var-router-ssl -n cfmr -o json -o=jsonpath="{.data.ca}" | base64 -
 ```
 oc get route router -n cfmr -oyaml > coreapi.yaml
 oc delete route router -n cfmr
-oc get route cfmr-ui-ui-ext -n cfmr-ui -oyaml > cfmr-ui-route.yaml
-oc delete route cfmr-ui-ui-ext -n cfmr-ui
+oc get route cfmr-ui -n cfmr-ui -oyaml > cfmr-ui-route.yaml
+oc delete route cfmr-ui -n cfmr-ui
 ```
 
 ### We are now jumping into the world of Ingress Sharding ...
