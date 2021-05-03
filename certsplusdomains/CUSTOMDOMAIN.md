@@ -87,7 +87,7 @@ oc label ns cfmr type=sharded --overwrite=true
 
 oc create route reencrypt router -n cfmr --hostname router.prelaunch.cfmr.site --insecure-policy Redirect --service router --port router-ssl --dest-ca-cert ./custom_ca.crt --wildcard-policy="Subdomain"
 
-oc create route passthrough cfmr-ui -n cfmr-ui --hostname cfmr-ui.prelaunch.cfmr.site --insecure-policy Redirect --service cfmr-ui --port https
+oc create route passthrough cfmr-ui -n cfmr-ui --hostname cfmr-ui.prelaunch.cfmr.site --insecure-policy Redirect --service cfmr-ui-ui-ext --port https
 ```
 
 ### Step 7:  Verify the routes are ONLY exposed via our new ingresscontroller
