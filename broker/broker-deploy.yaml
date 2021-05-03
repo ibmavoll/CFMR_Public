@@ -183,7 +183,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: metadata.namespace
-        image: image-registry.openshift-image-registry.svc:5000/cfmr-broker/cfmr-service-broker:1.0.0
+        image: cp.icr.io/cp/ibm-cfmr/cfmr-service-broker:1.0.0
         imagePullPolicy: IfNotPresent
         name: cfmr-service-broker
         ports:
@@ -201,6 +201,8 @@ spec:
         - mountPath: /var/run/secrets/cfmr-service-broker
           name: cfmr-service-broker
           readOnly: true
+      imagePullSecrets:
+      - name: prod-entitled-registry
       serviceAccountName: cfmr-service-broker
       volumes:
       - name: cfmr-service-broker

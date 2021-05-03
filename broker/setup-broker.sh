@@ -127,7 +127,7 @@ oc get is -n cfmr-broker
 # Looking for `image-registry.openshift-image-registry.svc:5000/cfmr-broker/cfmr-service-broker:1.0.0`
 
 # Install the Couchbase Custom Resource Definitions Required by the broker
-curl -L https://raw.githubusercontent.com/couchbase/service-broker/master/crds/servicebroker.couchbase.com_servicebrokerconfigs.yaml | oc apply -f -
+oc apply -f servicebroker.couchbase.com_servicebrokerconfigs.yaml
 
 # Next install the Broker's Configuration.  This ideally should be done before the broker's deploy is completed.
 # TODO:  Need to consider where to host icon images for the services.  Currently referring to a github url.
