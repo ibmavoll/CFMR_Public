@@ -109,10 +109,10 @@ spec:
       productVersion: "4.1.0"
       productChargedContainers: "All"
   image:
-    pullPolicy: Always
-    repository: cp.icr.io/ibm-cfmr/cfmr-installer
-    tag: 1.3.0
-    digest: sha256:9ef2810197c452382c565264b23834980e9b6c6539a4ffd1c7492d122691184b
+    pullPolicy: IfNotPresent
+    repository: us.icr.io/boilerupnc/cfmr-installer
+    tag: 1.3.1
+    digest: sha256:294e970dfd335aae625716997e8d706bf0f54ddbf7d4f4fb61df4c8441b8cb4d
   license:
     # Change license to true to indicate you have read and agree to license agreements : http://ibm.biz/cfmr-license
     accept: true
