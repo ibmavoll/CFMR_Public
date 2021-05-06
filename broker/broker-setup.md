@@ -25,6 +25,8 @@ oc annotate --overwrite namespace rabbitmq-system "openshift.io/sa.scc.uid-range
 ##### Step 5:  Apply the service configuration file
 `cat broker-config.yaml | sed 's/REPLACE_ME/'$(oc get configmap console-config -n openshift-console -o jsonpath='{.data.console-config\.yaml}' | grep consoleBaseAddress | awk '{print $2}' | cut -d"." -f2- | cut -d":" -f1)'/g' | sed 's/REPLACE_CUSTOM/your.custom.site/g' | oc apply -f -`
 
+> At this point, you can open and edit the broker-deploy.yaml file and toggle the brokers username/password basic auth setting if you'd like
+
 ##### Step 6:  Let's install the broker now.
 `oc apply -f ./broker-deploy.yaml`
 
@@ -79,6 +81,7 @@ cf service-access -b cfmr-broker
 #Getting service access for broker cfmr-broker as admin...
 #broker: cfmr-broker
 #   service              plan          access   orgs
+#   network-policy       c2c           all
 #   p-rabbitmq           single        all
 #   p-rabbitmq           standard      all
 #   p-redis              small-cache   all
