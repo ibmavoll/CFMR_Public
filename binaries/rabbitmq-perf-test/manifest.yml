@@ -1,0 +1,68 @@
+---
+applications:
+  - name: sprint-rabbitmq-perf-test
+    path: ./target/pcf-perf-test-1.0-SNAPSHOT.jar
+    buildpacks: 
+    - java_buildpack
+    memory: 6G
+    health-check-type: process
+    services: [rabbitmq-std-test]
+    env:
+#      AUTOACK:
+#      AUTO_DELETE:
+#      BODY:
+#      BODY_CONTENT_TYPE:
+#      CMESSAGES:
+#      CONFIRM:
+#      CONFIRM_TIMEOUT:
+      CONSUMERS: 18
+#      CONSUMER_CHANNEL_COUNT:
+#      CONSUMER_LATENCY:
+#      CONSUMER_RATE:
+#      CTXSIZE:
+#      EXCHANGE:
+#      EXCLUSIVE:
+#      FLAG:
+#      FRAMEMAX:
+#      GLOBAL_QOS:
+#      HEARTBEAT:
+      HEARTBEAT_SENDER_THREADS: 6
+#      ID:
+#      INTERVAL:
+#      LEGACY_METRICS:
+#      MESSAGE_PROPERTIES:
+#      METRICS_PROMETHEUS_ENDPOINT:
+#      METRICS_PROMETHEUS_PORT:
+#      METRICS_TAGS:
+#      MULTI_ACK_EVERY:
+#      NIO_THREADS:
+#      NIO_THREAD_POOL:
+#      OUTPUT_FILE:
+#      PMESSAGES:
+#      PREDECLARED:
+      PRODUCERS: 12
+#      PRODUCER_CHANNEL_COUNT:
+#      PRODUCER_RANDOM_START_DELAY:
+#      PRODUCER_SCHEDULER_THREADS:
+#      PTXSIZE:
+#      PUBLISHING_INTERVAL:
+#      QOS:
+#      QUEUE:
+#      QUEUE_ARGS:
+      QUEUE_PATTERN: "cfmr-perf-test-%d"
+      QUEUE_PATTERN_FROM: 1
+      QUEUE_PATTERN_TO: 10
+#      RANDOM_ROUTING_KEY:
+      RATE: 3000
+#      ROUTING_KEY:
+#      ROUTING_KEY_CACHE_SIZE:
+#      SASL_EXTERNAL:
+#      SIZE:
+#      SKIP_BINDING_QUEUES:
+#      SLOW_START:
+#      TIME:
+#      TYPE:
+#      URI:
+#      URIS:
+#      USE_DEFAULT_SSL_CONTEXT:
+#      USE_MILLIS:
