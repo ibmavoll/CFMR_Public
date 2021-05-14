@@ -1,0 +1,57 @@
+# allow getting status and patching only the one deployment you want
+# to restart
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: loggregator-bridge-restart
+  namespace: cfmr
+rules:
+  - apiGroups: ["apps", "extensions"]
+    resources: ["deployments"]
+    resourceNames: ["loggregator-bridge"]
+    verbs: ["get", "patch", "list", "watch"]
+---
+# bind the role to the service account
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: loggregator-bridge-restart
+  namespace: cfmr
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: loggregator-bridge-restart
+subjects:
+  - kind: ServiceAccount
+    name: eirinix
+    namespace: cfmr
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: loggregator-bridge-restart
+  namespace: cfmr
+spec:
+  concurrencyPolicy: Forbid
+  schedule: '*/10 * * * *' # cron at every 10th minute
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 2 # this has very low chance of failing, as all this does
+                      # is prompt kubernetes to schedule new replica set for
+                      # the deployment
+      activeDeadlineSeconds: 600  
+      template:
+        spec:
+          serviceAccountName: eirinix # name of the service account configured above
+          restartPolicy: Never
+          containers:
+            - name: kubectl
+              image: cp.icr.io/cp/ibm-cfmr/kubecf-kubectl:v1.19.2 
+              command:
+                 - bash
+                 - -c
+                 - >-
+                   kubectl rollout restart deployment/loggregator-bridge &&
+                   kubectl rollout status deployment/loggregator-bridge
