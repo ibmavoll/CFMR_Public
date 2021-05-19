@@ -1,0 +1,55 @@
+# allow getting status and patching only the one deployment you want
+# to restart
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ssh-key-meta-re-parenting
+  namespace: cfmr-eirini
+rules:
+  - apiGroups: [""]
+    resources: ["pods","secrets"]
+    verbs: ["get", "patch", "list", "update", "delete"]
+---
+# bind the role to the service account
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ssh-key-meta-re-parenting
+  namespace: cfmr-eirini
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ssh-key-meta-re-parenting
+subjects:
+  - kind: ServiceAccount
+    name: eirini
+    namespace: cfmr-eirini
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: ssh-key-meta-re-parenting
+  namespace: cfmr-eirini
+spec:
+  concurrencyPolicy: Forbid
+  schedule: '*/3 * * * 1-5' # cron at every 10th minute Mon - Fri
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 2 # this has very low chance of failing, as all this does
+                      # is prompt kubernetes to schedule new replica set for
+                      # the deployment
+      activeDeadlineSeconds: 600  
+      template:
+        spec:
+          serviceAccountName: eirini # name of the service account configured above
+          restartPolicy: Never
+          containers:
+            - name: kubectl
+              image: cp.icr.io/cp/ibm-cfmr/kubecf-kubectl:v1.19.2 
+              command:
+                 - bash
+                 - -c
+                 - >-
+                    kubectl get secrets -n cfmr-eirini -o go-template="{{range .items}}{{if .data.pod_name}}{{if not .metadata.ownerReferences}}{{.data.pod_name | base64decode}} {{.metadata.name}}{{\"\n\"}}{{end}}{{end}}{{end}}" | xargs -L1 sh -c 'kubectl get pods $1 -o go-template="kubectl patch secret $2 -n cfmr-eirini --type=JSON -p '\''[{\"op\":\"add\",\"path\":\"/metadata/ownerReferences\",\"value\":[{\"apiVersion\":\"v1\",\"blockOwnerDeletion\":false,\"controller\":true,\"kind\":\"Pod\",\"name\":\"$1\",\"uid\":\"{{.metadata.uid}}\"}]}]'\''{{\"\n\"}}"' sh | xargs -0 -L1 sh -c
