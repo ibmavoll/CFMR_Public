@@ -87,7 +87,7 @@ oc -n cfmr logs -l app.kubernetes.io/component=instance-index-env-injector
 oc -n cfmr logs -l app.kubernetes.io/name=eirini-annotate-extension
 ```
 
-#### Protecting for the future
+#### Protecting for the future - illustration
 ```
 # Example to illustrate how to relate the mutatingwebhookconfigs and secrets to their parent pod.  Thus, when the pods die (e.g. cluster restart)- the webhookconfigurations and secrets also go away.  A full script "future-proof-*" has also been created.
 
@@ -98,6 +98,22 @@ oc get pods -l app.kubernetes.io/component=persi -o go-template="{{range .items}
 oc get pods -l app.kubernetes.io/component=persi -o go-template="{{range .items}}\"\"kubectl patch secret eirini-persi-setupcertificate -n cfmr --type=JSON -p '[{\"op\":\"add\",\"path\":\"/metadata/ownerReferences\",\"value\":[{\"apiVersion\":\"v1\",\"blockOwnerDeletion\":false,\"controller\":true,\"kind\":\"Pod\",\"name\":\"{{.metadata.name}}\",\"uid\":\"{{.metadata.uid}}\"}]}]'\"\"{{\"\n\"}}{{end}}" | xargs -0 -L1 sh -c
 
 # RESULT: secret/eirini-persi-setupcertificate patched
+```
+
+#### Handy Restart one-liners
+
+```
+# Scale all cf apps down
+cf apps | sed 1,5d | awk '{print $1}' | xargs -I{} cf scale {} -i 0
+
+# Remove all stale ssh-key-meta secrets
+oc get secrets -n cfmr-eirini | grep ssh-key-meta | awk '{print $1}' | xargs -I{} oc delete secret {} -n cfmr-eirini
+
+# Apply cronjob ssh-key-meta re-parenting
+oc apply -f /path/to/cron-ssh-key-meta-re-parenting.yaml
+
+# Rescale all cf apps up
+cf apps | sed 1,5d | awk '{print $1}' | xargs -I{} cf scale {} -i 1
 ```
 
 
