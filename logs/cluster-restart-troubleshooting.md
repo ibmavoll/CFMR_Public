@@ -87,6 +87,20 @@ oc -n cfmr logs -l app.kubernetes.io/component=instance-index-env-injector
 oc -n cfmr logs -l app.kubernetes.io/name=eirini-annotate-extension
 ```
 
+#### Protecting for the future
+```
+# Example to illustrate how to relate the mutatingwebhookconfigs and secrets to their parent pod.  Thus, when the pods die (e.g. cluster restart)- the webhookconfigurations and secrets also go away.  A full script "future-proof-*" has also been created.
+
+oc get pods -l app.kubernetes.io/component=persi -o go-template="{{range .items}}\"\"kubectl patch mutatingwebhookconfiguration eirini-persi-mutating-hook -n cfmr --type=JSON -p '[{\"op\":\"add\",\"path\":\"/metadata/ownerReferences\",\"value\":[{\"apiVersion\":\"v1\",\"blockOwnerDeletion\":false,\"controller\":true,\"kind\":\"Pod\",\"name\":\"{{.metadata.name}}\",\"uid\":\"{{.metadata.uid}}\"}]}]'\"\"{{\"\n\"}}{{end}}" | xargs -0 -L1 sh -c
+
+# RESULT: mutatingwebhookconfiguration.admissionregistration.k8s.io/eirini-persi-mutating-hook patched
+
+oc get pods -l app.kubernetes.io/component=persi -o go-template="{{range .items}}\"\"kubectl patch secret eirini-persi-setupcertificate -n cfmr --type=JSON -p '[{\"op\":\"add\",\"path\":\"/metadata/ownerReferences\",\"value\":[{\"apiVersion\":\"v1\",\"blockOwnerDeletion\":false,\"controller\":true,\"kind\":\"Pod\",\"name\":\"{{.metadata.name}}\",\"uid\":\"{{.metadata.uid}}\"}]}]'\"\"{{\"\n\"}}{{end}}" | xargs -0 -L1 sh -c
+
+# RESULT: secret/eirini-persi-setupcertificate patched
+```
+
+
 #### Troubleshooting tips
 Example Logs from Eirini-Persi Pod
 
