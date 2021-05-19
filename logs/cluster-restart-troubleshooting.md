@@ -130,6 +130,12 @@ Example Logs from Eirini-Persi Pod
 {"level":"info","ts":1620059154.9382117,"caller":"ctxlog/context.go:51","msg":"Creating webhook server certificate"}
 ```
 
-Symptom
+Symptoms
 
 ![](webhook-out-of-synch-symptom.png)
+
+![](already-exists-webhook-server-cert.png)
+
+![](zero-of-one-ready-all-cf-apps.png)
+
+![](ssh-key-meta-stale-conflict.png)
