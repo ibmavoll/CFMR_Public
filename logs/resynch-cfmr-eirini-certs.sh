@@ -43,8 +43,8 @@ oc -n cfmr scale deploy ssh --replicas=1
 oc -n cfmr scale deploy instance-index-env-injector --replicas=1
 oc -n cfmr scale deploy eirini-annotate-extension --replicas=1
 
-echo "Sleeping for 7 seconds to let new certs and webhook configurations to instantiate"
-sleep 7
+echo "Sleeping for 11 seconds to allow new certs and webhook configurations to instantiate"
+sleep 11
 
 echo "Begin validation ..."
 # Validate
