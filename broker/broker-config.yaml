@@ -749,7 +749,7 @@ spec:
         name: '{{ printf "%v-dashboard" (registry "instance-name") }}'
         namespace: '{{ registry "p-rabbitmq-namespace" }}'
       spec:
-        host: '{{ printf "%v-dashboard.%v" (registry "instance-name") (registry "subdomain") }}'
+        host: '{{ printf "%v-dashboard.hare.%v" (registry "instance-name") (registry "customdomain") }}'
         port:
           targetPort: management
         to:
@@ -868,7 +868,7 @@ spec:
         name: '{{ printf "p-service-registry-%v" (registry "instance-name") }}'
         namespace: '{{ printf "%v" (registry "p-service-registry-namespace") }}'
       spec:
-        host: '{{ printf "cfmr-p-registry-%v.%v" (registry "instance-name") (registry "subdomain") }}'
+        host: '{{ printf "cfmr-p-registry-%v.scs.%v" (registry "instance-name") (registry "customdomain") }}'
         port:
           targetPort: eureka
         to:
@@ -881,7 +881,7 @@ spec:
       access_token_uri: '{{ printf "https://p-spring-cloud-services.uaa.%v/oauth/token" (registry "customdomain") }}'
       client_id: '{{ printf "p-spring-cloud-services-worker" }}'
       client_secret: '{{ printf "DWiPkHI83ZVg" }}'
-      uri: '{{ printf "http://cfmr-p-registry-%v.%v" (registry "instance-name") (registry "subdomain") }}'
+      uri: '{{ printf "http://cfmr-p-registry-%v.scs.%v" (registry "instance-name") (registry "customdomain") }}'
 # Spring Config-Server Service Templates
   - name: cfmr-p-config-server-svc
     template:
@@ -908,7 +908,7 @@ spec:
         name: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
         namespace: '{{ registry "p-config-server-namespace" }}'
       spec:
-        host: '{{ printf "cfmr-p-config-server-%v.%v" (registry "instance-name") (registry "subdomain") }}'
+        host: '{{ printf "cfmr-p-config-server-%v.scs.%v" (registry "instance-name") (registry "customdomain") }}'
         port:
           targetPort: 8888
         to:
@@ -926,7 +926,7 @@ spec:
         labels:
           app: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
       data:
-        application.properties: '{{ printf "\nspring.cloud.config.server.git.uri=%v\nspring.cloud.config.server.git.skipSslValidation=%v" (parameter "/git/uri" | default "https://github.com/spring-cloud-samples/config-repo.git") (parameter "/git/skipSslValidation" | default "false") }}'
+        application.properties: '{{ printf "\nspring.cloud.config.server.git.uri=%v\nspring.cloud.config.server.git.skipSslValidation=%v\nspring.cloud.config.server.git.username=%v\nspring.cloud.config.server.git.password=%v\nspring.cloud.config.server.git.default-label=%v" (parameter "/git/uri" | default "https://github.com/spring-cloud-samples/config-repo.git") (parameter "/git/skipSslValidation" | default "false") (parameter "/git/username") (parameter "/git/password") (parameter "/git/label" | default "master") }}'
   - name: cfmr-p-config-server-secret
     template:
       apiVersion: v1
@@ -1173,12 +1173,14 @@ spec:
         value:  '{{ printf "%s" (generatePassword 14 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
       - name: subdomain
         value: 'REPLACE_ME'
+      - name: customdomain
+        value: 'REPLACE_CUSTOM'
       - name: p-rabbitmq-namespace
         value: 'rabbitmq-deploy'
       - name: dashboard-url
-        value: '{{ printf "http://%v-dashboard.%v" (registry "instance-name") (registry "subdomain") }}'
+        value: '{{ printf "http://%v-dashboard.hare.%v" (registry "instance-name") (registry "customdomain") }}'
       - name: dashboard-domain
-        value: '{{ printf "%v-dashboard.%v" (registry "instance-name") (registry "subdomain") }}' 
+        value: '{{ printf "%v-dashboard.hare.%v" (registry "instance-name") (registry "customdomain") }}' 
       - name: amqp-url
         value: '{{ printf "%v.%v.svc.cluster.local:5672" (registry "instance-name") (registry "p-rabbitmq-namespace") }}'
       steps:
@@ -1219,12 +1221,14 @@ spec:
         value:  '{{ printf "%s" (generatePassword 14 "abcdefghijklmnopqrstuvwxyz0123456789") }}'
       - name: subdomain
         value: 'REPLACE_ME'
+      - name: customdomain
+        value: 'REPLACE_CUSTOM'
       - name: p-rabbitmq-namespace
         value: 'rabbitmq-deploy'
       - name: dashboard-url
-        value: '{{ printf "http://%v-dashboard.%v" (registry "instance-name") (registry "subdomain") }}'
+        value: '{{ printf "http://%v-dashboard.hare.%v" (registry "instance-name") (registry "customdomain") }}'
       - name: dashboard-domain
-        value: '{{ printf "%v-dashboard.%v" (registry "instance-name") (registry "subdomain") }}'
+        value: '{{ printf "%v-dashboard.hare.%v" (registry "instance-name") (registry "customdomain") }}'
       - name: amqp-url
         value: '{{ printf "%v.%v.svc.cluster.local:5672" (registry "instance-name") (registry "p-rabbitmq-namespace") }}'
       steps:
@@ -1264,7 +1268,7 @@ spec:
       - name: p-service-registry-namespace
         value: 'spring-services-deploy'
       - name: dashboard-url
-        value: '{{ printf "http://cfmr-p-registry-%v.%v" (registry "instance-name") (registry "subdomain") }}'
+        value: '{{ printf "http://cfmr-p-registry-%v.scs.%v" (registry "instance-name") (registry "customdomain") }}'
       steps:
       - name: cfmr-p-registry
         templates:
