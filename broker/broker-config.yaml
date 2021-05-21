@@ -419,7 +419,7 @@ spec:
             schedulerName: default-scheduler
             containers:
             - name: mariadb
-              image: mariadb:10.5.9
+              image: image-registry.openshift-image-registry.svc:5000/mysql-deploy/cfmr-p-mysql:1.0.0
               imagePullPolicy: "Always"
               env:
               - name: MYSQL_ROOT_PASSWORD
@@ -597,12 +597,12 @@ spec:
            containers:
            # deploy the redis_exporter as a sidecar to a Redis instance.
            - name: redis-exporter
-             image: oliver006/redis_exporter:v1.20.0-alpine
+             image: image-registry.openshift-image-registry.svc:5000/redis-deploy/cfmr-p-redis-exporter:1.0.0
              ports:
              - name: exporter
                containerPort: 9121
            - name: redis
-             image: redis:6.2.1
+             image: image-registry.openshift-image-registry.svc:5000/redis-deploy/cfmr-p-redis:1.0.0
              resources:
                limits:
                  memory: "1.5Gi"
@@ -835,7 +835,7 @@ spec:
           spec:
             containers:
             - name: eureka
-              image: boilerupnc/cfmr-p-registry:0.9.0
+              image: image-registry.openshift-image-registry.svc:5000/spring-services-deploy/cfmr-p-registry:1.0.0
               ports:
               - containerPort: 8761
               env:
@@ -926,7 +926,7 @@ spec:
         labels:
           app: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
       data:
-        application.properties: '{{ printf "\nspring.cloud.config.server.git.uri=%v" (parameter "/git/uri" | default "https://github.com/spring-cloud-samples/config-repo.git") }}'
+        application.properties: '{{ printf "\nspring.cloud.config.server.git.uri=%v\nspring.cloud.config.server.git.skipSslValidation=%v" (parameter "/git/uri" | default "https://github.com/spring-cloud-samples/config-repo.git") (parameter "/git/skipSslValidation" | default "false") }}'
   - name: cfmr-p-config-server-secret
     template:
       apiVersion: v1
@@ -964,7 +964,7 @@ spec:
               app: '{{ printf "p-config-server-%v" (registry "instance-name") }}'
           spec:
             containers:
-            - image: boilerupnc/cfmr-config-server:0.9.0
+            - image: image-registry.openshift-image-registry.svc:5000/spring-services-deploy/cfmr-p-config-server:1.0.0
               imagePullPolicy: Always
               lifecycle:
                 postStart:
