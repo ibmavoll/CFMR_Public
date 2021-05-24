@@ -30,11 +30,11 @@ oc delete mutatingwebhookconfigurations eirinix-annotation-mutating-hook
 
 
 # Remove stale *-setupcertificates
-oc -n cfmr delete secret eirini-persi-setupcertificate
-oc -n cfmr delete secret eirini-dns-aliases-setupcertificate
-oc -n cfmr delete secret eirini-ssh-setupcertificate
-oc -n cfmr delete secret eirini-x-setupcertificate
-oc -n cfmr delete secret eirinix-annotation-setupcertificate
+oc -n cfmr delete secret eirini-persi-setupcertificate --ignore-not-found=true
+oc -n cfmr delete secret eirini-dns-aliases-setupcertificate --ignore-not-found=true
+oc -n cfmr delete secret eirini-ssh-setupcertificate --ignore-not-found=true
+oc -n cfmr delete secret eirini-x-setupcertificate --ignore-not-found=true
+oc -n cfmr delete secret eirinix-annotation-setupcertificate --ignore-not-found=true
 
 # Regenerate new synchronized certificates and client configs for the mutatingwebhookconfiguration
 oc -n cfmr scale deploy persi --replicas=1
@@ -43,16 +43,21 @@ oc -n cfmr scale deploy ssh --replicas=1
 oc -n cfmr scale deploy instance-index-env-injector --replicas=1
 oc -n cfmr scale deploy eirini-annotate-extension --replicas=1
 
-echo "Sleeping for 11 seconds to allow new certs and webhook configurations to instantiate"
-sleep 11
+echo "Sleeping for 30 seconds to allow new certs and webhook configurations to instantiate"
+sleep 30
 
 echo "Begin validation ..."
 # Validate
 oc get mutatingwebhookconfiguration eirini-persi-mutating-hook
+sleep 2
 oc get mutatingwebhookconfigurations eirini-dns-aliases-mutating-hook
+sleep 2
 oc get mutatingwebhookconfigurations eirini-ssh-mutating-hook
+sleep 2
 oc get mutatingwebhookconfigurations eirini-x-mutating-hook
+sleep 2
 oc get mutatingwebhookconfigurations eirinix-annotation-mutating-hook
+sleep 2
 
 oc -n cfmr get secret eirini-persi-setupcertificate
 oc -n cfmr get secret eirini-dns-aliases-setupcertificate
