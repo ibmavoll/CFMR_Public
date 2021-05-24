@@ -22,11 +22,11 @@ oc -n cfmr scale deploy eirini-annotate-extension --replicas=0
 
 
 # Remove cluster scoped mutatingwebhookconfiguration with stale client config
-oc delete mutatingwebhookconfigurations eirini-persi-mutating-hook 
-oc delete mutatingwebhookconfigurations eirini-dns-aliases-mutating-hook
-oc delete mutatingwebhookconfigurations eirini-ssh-mutating-hook
-oc delete mutatingwebhookconfigurations eirini-x-mutating-hook
-oc delete mutatingwebhookconfigurations eirinix-annotation-mutating-hook
+oc delete mutatingwebhookconfigurations eirini-persi-mutating-hook --ignore-not-found=true
+oc delete mutatingwebhookconfigurations eirini-dns-aliases-mutating-hook --ignore-not-found=true
+oc delete mutatingwebhookconfigurations eirini-ssh-mutating-hook --ignore-not-found=true
+oc delete mutatingwebhookconfigurations eirini-x-mutating-hook --ignore-not-found=true
+oc delete mutatingwebhookconfigurations eirinix-annotation-mutating-hook --ignore-not-found=true
 
 
 # Remove stale *-setupcertificates
