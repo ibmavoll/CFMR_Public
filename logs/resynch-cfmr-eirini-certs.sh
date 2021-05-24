@@ -19,6 +19,8 @@ oc -n cfmr scale deploy eirini-dns-aliases --replicas=0
 oc -n cfmr scale deploy ssh --replicas=0
 oc -n cfmr scale deploy instance-index-env-injector --replicas=0
 oc -n cfmr scale deploy eirini-annotate-extension --replicas=0
+oc -n cfmr scale deploy eirini-annotate-extension --replicas=0
+oc -n cfmr scale deploy loggregator-bridge --replicas=0
 
 
 # Remove cluster scoped mutatingwebhookconfiguration with stale client config
@@ -27,6 +29,7 @@ oc delete mutatingwebhookconfigurations eirini-dns-aliases-mutating-hook --ignor
 oc delete mutatingwebhookconfigurations eirini-ssh-mutating-hook --ignore-not-found=true
 oc delete mutatingwebhookconfigurations eirini-x-mutating-hook --ignore-not-found=true
 oc delete mutatingwebhookconfigurations eirinix-annotation-mutating-hook --ignore-not-found=true
+oc delete mutatingwebhookconfigurations eirini-loggregator-bridge-mutating-hook --ignore-not-found=true
 
 
 # Remove stale *-setupcertificates
@@ -35,6 +38,7 @@ oc -n cfmr delete secret eirini-dns-aliases-setupcertificate --ignore-not-found=
 oc -n cfmr delete secret eirini-ssh-setupcertificate --ignore-not-found=true
 oc -n cfmr delete secret eirini-x-setupcertificate --ignore-not-found=true
 oc -n cfmr delete secret eirinix-annotation-setupcertificate --ignore-not-found=true
+oc -n cfmr delete secret eirini-loggregator-bridge-setupcertificate --ignore-not-found=true
 
 # Regenerate new synchronized certificates and client configs for the mutatingwebhookconfiguration
 oc -n cfmr scale deploy persi --replicas=1
@@ -42,6 +46,7 @@ oc -n cfmr scale deploy eirini-dns-aliases --replicas=1
 oc -n cfmr scale deploy ssh --replicas=1
 oc -n cfmr scale deploy instance-index-env-injector --replicas=1
 oc -n cfmr scale deploy eirini-annotate-extension --replicas=1
+oc -n cfmr scale deploy loggregator-bridge --replicas=1
 
 echo "Sleeping for 30 seconds to allow new certs and webhook configurations to instantiate"
 sleep 30
@@ -58,12 +63,15 @@ oc get mutatingwebhookconfigurations eirini-x-mutating-hook
 sleep 2
 oc get mutatingwebhookconfigurations eirinix-annotation-mutating-hook
 sleep 2
+oc get mutatingwebhookconfigurations eirini-loggregator-bridge-mutating-hook
+sleep 2
 
 oc -n cfmr get secret eirini-persi-setupcertificate
 oc -n cfmr get secret eirini-dns-aliases-setupcertificate
 oc -n cfmr get secret eirini-ssh-setupcertificate
 oc -n cfmr get secret eirini-x-setupcertificate
 oc -n cfmr get secret eirinix-annotation-setupcertificate
+oc -n cfmr get secret eirini-loggregator-bridge-setupcertificate
 
 echo ""
 echo "Persi Logs ..."
@@ -81,3 +89,5 @@ echo ""
 echo "Eirini Annotate Logs ..."
 oc -n cfmr logs -l app.kubernetes.io/name=eirini-annotate-extension
 echo ""
+echo "Eirini Loggregator Logs ..."
+oc -n cfmr logs -l app.kubernetes.io/component=loggregator-bridge
