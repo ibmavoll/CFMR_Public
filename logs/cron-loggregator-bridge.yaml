@@ -36,7 +36,7 @@ metadata:
   namespace: cfmr
 spec:
   concurrencyPolicy: Forbid
-  schedule: '*/3 * * * *' # cron at every 10th minute
+  schedule: '*/10 * * * 1-5' # cron at every 10th minute on Mon-Fri
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   jobTemplate:
