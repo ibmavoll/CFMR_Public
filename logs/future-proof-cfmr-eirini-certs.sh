@@ -48,7 +48,10 @@ oc -n cfmr get pods -l app.kubernetes.io/name=eirini-annotate-extension -o go-te
 oc -n cfmr get pods -l app.kubernetes.io/name=eirini-annotate-extension -o go-template="{{range .items}}\"\"kubectl patch secret eirinix-annotation-setupcertificate -n cfmr --type=JSON -p '[{\"op\":\"add\",\"path\":\"/metadata/ownerReferences\",\"value\":[{\"apiVersion\":\"v1\",\"blockOwnerDeletion\":false,\"controller\":true,\"kind\":\"Pod\",\"name\":\"{{.metadata.name}}\",\"uid\":\"{{.metadata.uid}}\"}]}]'\"\"{{\"\n\"}}{{end}}" | xargs -0 -L1 sh -c
 
 # Patching loggregator-bridge-mutating-hook
+# Doing this within the cronjob instead of here ...
 # oc -n cfmr get pods -l app.kubernetes.io/component=loggregator-bridge -o go-template="{{range .items}}\"\"kubectl patch mutatingwebhookconfiguration eirini-loggregator-bridge-mutating-hook -n cfmr --type=JSON -p '[{\"op\":\"add\",\"path\":\"/metadata/ownerReferences\",\"value\":[{\"apiVersion\":\"v1\",\"blockOwnerDeletion\":false,\"controller\":true,\"kind\":\"Pod\",\"name\":\"{{.metadata.name}}\",\"uid\":\"{{.metadata.uid}}\"}]}]'\"\"{{\"\n\"}}{{end}}" | xargs -0 -L1 sh -c
 
-# Patching loggregator-bridge-setupcertificate
-# oc -n cfmr get pods -l app.kubernetes.io/component=loggregator-bridge -o go-template="{{range .items}}\"\"kubectl patch secret eirini-loggregator-bridge-setupcertificate -n cfmr --type=JSON -p '[{\"op\":\"add\",\"path\":\"/metadata/ownerReferences\",\"value\":[{\"apiVersion\":\"v1\",\"blockOwnerDeletion\":false,\"controller\":true,\"kind\":\"Pod\",\"name\":\"{{.metadata.name}}\",\"uid\":\"{{.metadata.uid}}\"}]}]'\"\"{{\"\n\"}}{{end}}" | xargs -0 -L1 sh -c
+# Patching loggregator-bridge-setupcertificate.  
+# This is slow to be created. But we want it cleaned up after restart.
+# Attaching it to the base eirini pod
+oc -n cfmr get pods -l name=eirini -o go-template="{{range .items}}\"\"kubectl patch secret eirini-loggregator-bridge-setupcertificate -n cfmr --type=JSON -p '[{\"op\":\"add\",\"path\":\"/metadata/ownerReferences\",\"value\":[{\"apiVersion\":\"v1\",\"blockOwnerDeletion\":false,\"controller\":true,\"kind\":\"Pod\",\"name\":\"{{.metadata.name}}\",\"uid\":\"{{.metadata.uid}}\"}]}]'\"\"{{\"\n\"}}{{end}}" | xargs -0 -L1 sh -c
