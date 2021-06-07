@@ -50,30 +50,33 @@ oc -n cfmr scale deploy eirini-annotate-extension --replicas=1
 # Rollout logregator-bridge restart with a 3 minute sleep and then patch the hook
 oc -n cfmr rollout restart deployment/loggregator-bridge && \
   oc -n cfmr rollout status deployment/loggregator-bridge && \
-  sleep 180 && \
-  oc -n cfmr get pods --field-selector=status.phase=Running -l app.kubernetes.io/component=loggregator-bridge -o go-template="{{range .items}}\"\"oc patch mutatingwebhookconfiguration eirini-loggregator-bridge-mutating-hook -n cfmr --type=JSON -p '[{\"op\":\"add\",\"path\":\"/metadata/ownerReferences\",\"value\":[{\"apiVersion\":\"v1\",\"blockOwnerDeletion\":false,\"controller\":true,\"kind\":\"Pod\",\"name\":\"{{.metadata.name}}\",\"uid\":\"{{.metadata.uid}}\"}]}]'\"\"{{\"\n\"}}{{end}}" | xargs -0 -L1 sh -c
+  sleep 180 
 
 echo "Begin validation ..."
 # Validate
-oc get mutatingwebhookconfiguration eirini-persi-mutating-hook
+oc get mutatingwebhookconfiguration eirini-persi-mutating-hook --ignore-not-found=true
 sleep 2
-oc get mutatingwebhookconfigurations eirini-dns-aliases-mutating-hook
+oc get mutatingwebhookconfigurations eirini-dns-aliases-mutating-hook --ignore-not-found=true
 sleep 2
-oc get mutatingwebhookconfigurations eirini-ssh-mutating-hook
+oc get mutatingwebhookconfigurations eirini-ssh-mutating-hook --ignore-not-found=true
 sleep 2
-oc get mutatingwebhookconfigurations eirini-x-mutating-hook
+oc get mutatingwebhookconfigurations eirini-x-mutating-hook --ignore-not-found=true
 sleep 2
-oc get mutatingwebhookconfigurations eirinix-annotation-mutating-hook
+oc get mutatingwebhookconfigurations eirinix-annotation-mutating-hook --ignore-not-found=true
 sleep 2
-oc get mutatingwebhookconfigurations eirini-loggregator-bridge-mutating-hook
+oc get mutatingwebhookconfigurations eirini-loggregator-bridge-mutating-hook --ignore-not-found=true
 sleep 2
 
-oc -n cfmr get secret eirini-persi-setupcertificate
-oc -n cfmr get secret eirini-dns-aliases-setupcertificate
-oc -n cfmr get secret eirini-ssh-setupcertificate
-oc -n cfmr get secret eirini-x-setupcertificate
-oc -n cfmr get secret eirinix-annotation-setupcertificate
-oc -n cfmr get secret eirini-loggregator-bridge-setupcertificate
+oc -n cfmr get secret eirini-persi-setupcertificate --ignore-not-found=true
+oc -n cfmr get secret eirini-dns-aliases-setupcertificate --ignore-not-found=true
+oc -n cfmr get secret eirini-ssh-setupcertificate --ignore-not-found=true
+oc -n cfmr get secret eirini-x-setupcertificate --ignore-not-found=true
+oc -n cfmr get secret eirinix-annotation-setupcertificate --ignore-not-found=true
+oc -n cfmr get secret eirini-loggregator-bridge-setupcertificate --ignore-not-found=true
+
+# Lets get logs from whatever is ready ...
+# Turning off error sensitivity
+set +e 
 
 echo ""
 echo "Persi Logs ..."
