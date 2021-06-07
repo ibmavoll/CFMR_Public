@@ -44,7 +44,7 @@ spec:
       template:
         spec:
           serviceAccountName: eirini # name of the service account configured above
-          restartPolicy: Never
+          restartPolicy: OnFailure
           containers:
             - name: kubectl
               image: cp.icr.io/cp/ibm-cfmr/kubecf-kubectl:v1.19.2 
