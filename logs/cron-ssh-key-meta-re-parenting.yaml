@@ -32,6 +32,7 @@ metadata:
   namespace: cfmr-eirini
 spec:
   concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 600
   schedule: '*/3 * * * 1-5' # cron at every 10th minute Mon - Fri
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
