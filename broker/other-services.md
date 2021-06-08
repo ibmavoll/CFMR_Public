@@ -66,26 +66,19 @@ OK
  
  > ![Typing Dog](typingdog.png)
  
- 1. To create a service instance, execute the following command with its custom JSON payload. 
-  
-      ```
- SOURCEAPP=frontend;DESTAPP=backend; cf create-service network-policy c2c front2back -c
-  '{"source-guid":"'$(cf app "${SOURCEAPP}" --guid)'","destination-appname":"'"${DESTAPP}"'",
-  "destination-guid":"'$(cf app "${DESTAPP}" --guid)'","ports":[{"name":"cat1","port":7007,
-  "targetport":7007,"protocol":"tcp"},{"name":"cat2","port":7008,"targetport":7008,"protocol":"TCP"},
-{"name":"cat2a","port":7009,"targetport":7009,"protocol":"TCP"},{"name":"cat3","port":9001,
-"targetport":9001,"protocol":"udp"},{"name":"cat4","port":9002,"targetport":9002,"protocol":"UDP"},
-{"name":"cat4a","port":9003,"targetport":9003,"protocol":"UDP"}]}'
- ``` 
+ 1. To create a service instance, execute the following command with its custom JSON payload.
+ 
+    ```SOURCEAPP=frontend;DESTAPP=backend; cf create-service network-policy c2c front2back -c '{"source-guid":"'$(cf app "${SOURCEAPP}" --guid)'","destination-appname":"'"${DESTAPP}"'","destination-guid":"'$(cf app "${DESTAPP}" --guid)'","ports":[{"name":"cat1","port":7007,"targetport":7007,"protocol":"tcp"},{"name":"cat2","port":7008,"targetport":7008,"protocol":"TCP"},{"name":"cat2a","port":7009,"targetport":7009,"protocol":"TCP"},{"name":"cat3","port":9001,"targetport":9001,"protocol":"udp"},{"name":"cat4","port":9002,"targetport":9002,"protocol":"UDP"},{"name":"cat4a","port":9003,"targetport":9003,"protocol":"UDP"}]}'```
+ 
  2. To validate on the backend within OpenShift, you can identify and inspect the resulting networkpolicy and service resources generated.
  
      ```
      ▶ oc get svc,networkpolicy -n cfmr-eirini
      NAME              TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                                                 AGE
      service/backend   ClusterIP   172.21.123.93   <none>        7007/TCP,7008/TCP,7009/TCP,9001/UDP,9002/UDP,9003/UDP   11d
-NAME                                                   POD-SELECTOR                                                     AGE
-     networkpolicy.networking.k8s.io/c2c-x105i4k5-backend   cloudfoundry.org/app_guid=cb203632-efaf-47f1-ae65-68b856a28c6f   11d
- ``` 
+     NAME                                                   POD-SELECTOR                                                     AGE
+     networkpolicy.networking.k8s.io/c2c-x105i4k5-backend   cloudfoundry.org/app_guid=cb203632-efaf-47f1-ae65-68b856a28c6f   11d``` 
+ 
  3. Now attempt to connect from the frontend to the backend via HTTP on the 7007, 7008 or 7009 ports.<br/>(e.g. `backend.cfmr-eirini:9002`) The backend will render a typing cat ...
  ![Typing Cat](typingcat.png)
  
