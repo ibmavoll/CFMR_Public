@@ -30,6 +30,9 @@ oc delete mutatingwebhookconfigurations eirini-x-mutating-hook --ignore-not-foun
 oc delete mutatingwebhookconfigurations eirinix-annotation-mutating-hook --ignore-not-found=true
 oc delete mutatingwebhookconfigurations eirini-loggregator-bridge-mutating-hook --ignore-not-found=true
 
+# Patch any remaining mutating webhooks to temporarily Ignore x509 Cert fails
+oc get mutatingwebhookconfiguration --no-headers | awk '{print $1}' | xargs -I{} oc patch mutatingwebhookconfiguration {} --type=JSON -p '[{"op":"replace","path":"/webhooks/0/failurePolicy","value":"Ignore"}]'
+
 
 # Remove stale *-setupcertificates
 oc -n cfmr delete secret eirini-persi-setupcertificate --ignore-not-found=true
@@ -73,6 +76,9 @@ oc -n cfmr get secret eirini-ssh-setupcertificate --ignore-not-found=true
 oc -n cfmr get secret eirini-x-setupcertificate --ignore-not-found=true
 oc -n cfmr get secret eirinix-annotation-setupcertificate --ignore-not-found=true
 oc -n cfmr get secret eirini-loggregator-bridge-setupcertificate --ignore-not-found=true
+
+# Reinstate failure policy for mutating web hook configuration
+oc get MutatingWebhookConfiguration --no-headers | awk '{print $1}' | xargs -I{} oc patch mutatingwebhookconfiguration {} --type=JSON -p '[{"op":"replace","path":"/webhooks/0/failurePolicy","value":"Fail"}]'
 
 # Lets get logs from whatever is ready ...
 # Turning off error sensitivity
