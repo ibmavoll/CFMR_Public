@@ -20,6 +20,7 @@ oc -n cfmr scale deploy ssh --replicas=0
 oc -n cfmr scale deploy instance-index-env-injector --replicas=0
 oc -n cfmr scale deploy eirini-annotate-extension --replicas=0
 oc -n cfmr scale deploy eirini-annotate-extension --replicas=0
+oc -n cfmr scale deploy loggregator-bridge --replicas=0
 
 
 # Remove cluster scoped mutatingwebhookconfiguration with stale client config
@@ -31,7 +32,12 @@ oc delete mutatingwebhookconfigurations eirinix-annotation-mutating-hook --ignor
 oc delete mutatingwebhookconfigurations eirini-loggregator-bridge-mutating-hook --ignore-not-found=true
 
 # Patch any remaining mutating webhooks to temporarily Ignore x509 Cert fails
-oc get mutatingwebhookconfiguration --no-headers | awk '{print $1}' | xargs -I{} oc patch mutatingwebhookconfiguration {} --type=JSON -p '[{"op":"replace","path":"/webhooks/0/failurePolicy","value":"Ignore"}]'
+oc patch mutatingwebhookconfiguration cf-operator-hook-cfmr-cf-operator --type=JSON -p '[{"op":"replace","path":"/webhooks/1/failurePolicy","value":"Ignore"},{"op":"replace","path":"/webhooks/0/failurePolicy","value":"Ignore"}]'
+
+oc patch mutatingwebhookconfiguration qsts-hook-cfmr-cf-operator --type=JSON -p '[{"op":"replace","path":"/webhooks/1/failurePolicy","value":"Ignore"},{"op":"replace","path":"/webhooks/0/failurePolicy","value":"Ignore"}]'
+
+# Patch any remaining validating webhooks to temporarily Ignore x509 Cert fails
+oc patch validatingwebhookconfiguration cf-operator-hook-cfmr-cf-operator --type=JSON -p '[{"op":"replace","path":"/webhooks/1/failurePolicy","value":"Ignore"},{"op":"replace","path":"/webhooks/0/failurePolicy","value":"Ignore"}]'
 
 
 # Remove stale *-setupcertificates
@@ -49,11 +55,14 @@ oc -n cfmr scale deploy eirini-dns-aliases --replicas=1
 oc -n cfmr scale deploy ssh --replicas=1
 oc -n cfmr scale deploy instance-index-env-injector --replicas=1
 oc -n cfmr scale deploy eirini-annotate-extension --replicas=1
+oc -n cfmr scale deploy loggregator-bridge --replicas=1
+
+sleep 60
 
 # Rollout logregator-bridge restart with a 3 minute sleep and then patch the hook
 oc -n cfmr rollout restart deployment/loggregator-bridge && \
   oc -n cfmr rollout status deployment/loggregator-bridge && \
-  sleep 180 
+  sleep 60 
 
 echo "Begin validation ..."
 # Validate
@@ -77,8 +86,6 @@ oc -n cfmr get secret eirini-x-setupcertificate --ignore-not-found=true
 oc -n cfmr get secret eirinix-annotation-setupcertificate --ignore-not-found=true
 oc -n cfmr get secret eirini-loggregator-bridge-setupcertificate --ignore-not-found=true
 
-# Reinstate failure policy for mutating web hook configuration
-oc get MutatingWebhookConfiguration --no-headers | awk '{print $1}' | xargs -I{} oc patch mutatingwebhookconfiguration {} --type=JSON -p '[{"op":"replace","path":"/webhooks/0/failurePolicy","value":"Fail"}]'
 
 # Lets get logs from whatever is ready ...
 # Turning off error sensitivity
