@@ -15,7 +15,7 @@ cp.stg.icr.io/cp/ibm-cfmr/ubi-stratos-mariadb:4.4.0-rc1
 **Steps**
 Basically same steps as this: 
 
-[https://www.ibm.com/docs/en/cfmr?topic=guide-upgrading](https://media.github.ibm.com/user/313163/files/12001200-c7b3-11eb-9159-0938e8cd38c4)
+[https://www.ibm.com/docs/en/cfmr?topic=guide-upgrading](https://www.ibm.com/docs/en/cfmr?topic=guide-upgrading)
 
 1. Update the following fields in the **original CR yaml** 
 ```
